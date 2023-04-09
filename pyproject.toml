@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+namespaces = true
+where = ["src"]
+
+[tool.setuptools.package-data]
+"ColabGeek.shell_scripts" = ["*"]
+
+[project]
+name = "ColabGeek"
+version = "1.0.1"
+authors = [
+    {name = "Yiming Sun",email = "yiming.sun12138@gmail.com"},
+]
+description = "A package designed to run useful tools on Google Colab, including tunnelling, web IDE and so on. It is worth noting that this package is also compatible with other Ubuntu operating system servers, so it is worth trying on other platforms as well."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yimingsun12138/ColabGeek"
+"Bug Tracker" = "https://github.com/yimingsun12138/ColabGeek/issues"

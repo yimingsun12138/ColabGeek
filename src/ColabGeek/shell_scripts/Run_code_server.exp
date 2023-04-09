@@ -1,0 +1,44 @@
+#!/usr/bin/expect
+
+set timeout -1
+set user_name [lindex $argv 0]
+set user_password [lindex $argv 1]
+set code_server_port [lindex $argv 2]
+set code_server_password [lindex $argv 3]
+set tmp_path [lindex $argv 4]
+
+spawn su $user_name
+expect "\\\$"
+send "cd /tmp/$tmp_path\r"
+expect "\\\$"
+
+# install code server
+send "curl -fsSL https://code-server.dev/install.sh | sh\r"
+expect "*password*"
+send "$user_password\r"
+expect "\\\$"
+send "code-server -v > /tmp/$tmp_path/code_server.log 2>&1\r"
+expect "\\\$"
+
+# config code server
+set temp_var "bind-addr: 127.0.0.1:$code_server_port"
+send "echo $temp_var > /home/$user_name/.config/code-server/config.yaml\r"
+expect "\\\$"
+set temp_var "auth: password"
+send "echo $temp_var >> /home/$user_name/.config/code-server/config.yaml\r"
+expect "\\\$"
+set temp_var "password: $code_server_password"
+send "echo $temp_var >> /home/$user_name/.config/code-server/config.yaml\r"
+expect "\\\$"
+set temp_var "cert: false"
+send "echo $temp_var >> /home/$user_name/.config/code-server/config.yaml\r"
+expect "\\\$"
+
+# run code server
+send "nohup code-server > /tmp/$tmp_path/code_server.log 2>&1 &\r"
+expect "\\\$"
+
+send "exit\r"
+expect "*"
+send "exit\r"
+expect eof
