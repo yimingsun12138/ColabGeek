@@ -184,3 +184,12 @@ class ColabSession:
             print(i)
             ii = ii + 1
             time.sleep(60)
+
+'''
+define other method
+'''
+# update environment
+def update_environment():
+    os.system("apt update")
+    os.system("apt upgrade -y")
+    os.system("apt autoremove -y")

@@ -15,7 +15,7 @@ version = "1.0.1"
 authors = [
     {name = "Yiming Sun",email = "yiming.sun12138@gmail.com"},
 ]
-description = "A package designed to run useful tools on Google Colab, including tunnelling, web IDE and so on. It is worth noting that this package is also compatible with other Ubuntu operating system servers, so it is worth trying on other platforms as well."
+description = "ColabGeek is designed to help run useful tools on Google Colab, including port forwarding, web IDE and so on. It is worth noting that this package is also compatible with other Ubuntu operating system servers, so try on other platforms as well."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
