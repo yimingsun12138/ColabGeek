@@ -57,6 +57,8 @@ class ColabSession:
             port = self.port
 
         # install localtunnel
+        if(len(os.popen("which npm").readlines()) == 0):
+            os.system("apt install nodejs npm -y")
         os.system("npm install -g localtunnel")
 
         # exec cmd
@@ -134,7 +136,7 @@ class ColabSession:
             password = self.password
 
         # install expect
-        os.system("apt install expect")
+        os.system("apt install expect -y")
 
         # get shell script path
         script_path = os.path.dirname(__file__)
@@ -159,10 +161,10 @@ class ColabSession:
             password = self.password
 
         # install shadowsocks
-        os.system("apt install shadowsocks-libev")
+        os.system("apt install shadowsocks-libev -y")
 
         # run shadowsocks
-        char_cmd = "ss-server" + " " + "-s 127.0.0.1" + " " + "-p" + " " + str(port) + " " + "-k" + " " + str(password) + " " + "-m" + " " + str(encrypt)
+        char_cmd = "ss-server" + " " + "-s 0.0.0.0" + " " + "-p" + " " + str(port) + " " + "-k" + " " + str(password) + " " + "-m" + " " + str(encrypt)
         char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/shadowsocks.log 2>&1 &"
         os.system(char_cmd)
 
