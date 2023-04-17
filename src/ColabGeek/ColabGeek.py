@@ -31,8 +31,15 @@ class ColabSession:
     '''
     # add user method
     def add_user(self):
-        os.system("useradd -m -s /bin/bash" + " " + str(self.user))
+        # check user list
+        user_list = os.popen("getent passwd | awk -F: '{print $1}'")
+        for i in range(0,len(user_list)):
+            user_list[i] = user_list[i].replace("\n","")
+        if (str(self.user) not in user_list):
+            os.system("useradd -m -s /bin/bash" + " " + str(self.user))
+        # change user passwd
         os.system("echo '" + str(self.user) + ":" + str(self.password) + "' | chpasswd")
+        # add sudo permission
         if self.sudo:
             os.system("usermod -G sudo" + " " + str(self.user))
 

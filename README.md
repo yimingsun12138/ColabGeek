@@ -15,7 +15,7 @@ First load the ColabGeek module and update all the packages and dependencies in 
 ```python
 import ColabGeek
 
-GolabGeek.update_environment()
+ColabGeek.update_environment()
 ```
 
 Initiate the Colab session by add linux users and mount Google Drive.
@@ -23,8 +23,6 @@ Initiate the Colab session by add linux users and mount Google Drive.
 ```python
 main = ColabGeek.ColabSession(user='Knight',password='midnight',mount_GD=True)
 ```
-
-***
 
 As a cloud computing platform based on Jupyter notebooks, Google Colab does not provide a top-notch comfortable environment for R language data analysis and other non-Python programming. Therefore, this project provides a method for quickly installing other web IDE on Google Colab, enabling it to expand its range of capabilities.
 
@@ -53,8 +51,6 @@ main.Run_code_server()
 main.Run_Rstudio_server()
 ```
 
-***
-
 Google Colab does not allow any internet connections to their servers except the official web interface. So, port forwarding methods are required to proxy the web IDE installed.
 
 ### localtunnel
@@ -80,8 +76,6 @@ main.Run_ngrok()
 ```
 
 For now, all the port forwarding methods built in ColabGeek only accept http protocal. I am still tring to add TCP forwarding methods to ColabGeek. If you have any good ideas and advices, leave an issue.
-
-***
 
 ### shadowsocks
 
