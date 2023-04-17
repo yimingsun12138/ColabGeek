@@ -32,7 +32,7 @@ class ColabSession:
     # add user method
     def add_user(self):
         # check user list
-        user_list = os.popen("getent passwd | awk -F: '{print $1}'")
+        user_list = os.popen("getent passwd | awk -F: '{print $1}'").readlines()
         for i in range(0,len(user_list)):
             user_list[i] = user_list[i].replace("\n","")
         if (str(self.user) not in user_list):
