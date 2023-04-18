@@ -39,6 +39,15 @@ As a cloud computing platform based on Jupyter notebooks, Google Colab does not 
 main.Run_code_server()
 ```
 
+You can also install code server extension by providing extension id or the path of the VSIX file downloaded from [vscode marketplace](https://marketplace.visualstudio.com/vscode).
+
+```python
+# ColabGeek.Install_code_server_extension has the following parameters:
+# - extension The extension id or the path of the VSIX file.
+# - verbose Show the running logs.
+main.Install_code_server_extension(extension='ms-python.anaconda-extension-pack')
+```
+
 ### Run Rstudio server
 
 [Rstudio server](https://posit.co/products/open-source/rstudio-server/) is a web IDE for R programming. With Rstudio server, users can run R scripts, create and manage R projects, develop and test code, and share their work with others. Rstudio server also offers powerful features such as syntax highlighting, code completion, debugging and data visualization.
