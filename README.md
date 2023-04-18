@@ -45,6 +45,7 @@ You can also install code server extension by providing extension id or the path
 # ColabGeek.Install_code_server_extension has the following parameters:
 # - extension The extension id or the path of the VSIX file.
 # - verbose Show the running logs.
+
 main.Install_code_server_extension(extension='ms-python.anaconda-extension-pack')
 ```
 
