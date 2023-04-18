@@ -155,6 +155,13 @@ class ColabSession:
         if verbose:
             exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
+
+    def Install_code_server_extension(self,extension,verbose = True):
+        char_cmd = "sudo -u" + " " + str(self.user) + " " + "code-server --install-extension" + " " + str(extension)
+        exec_logging = os.popen(char_cmd)
+        if verbose:
+            exec_logging = ''.join(exec_logging.readlines())
+            print(exec_logging)
             
     '''
     proxy method
