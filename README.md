@@ -1,5 +1,8 @@
 # ColabGeek
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/yimingsun12138/ColabGeek/blob/main/LICENSE)
+[![PyPI version](https://badge.fury.io/py/ColabGeek.svg)](https://badge.fury.io/py/ColabGeek)
+
 ColabGeek Python package is designed to help run useful tools on Google Colab, including web IDE, port forwarding and so on. It is worth noting that this package is also compatible with other Ubuntu operating system based servers, so try this package on other platforms as well.
 
 ## Installation
@@ -47,6 +50,19 @@ You can also install code server extension by providing extension id or the path
 # - verbose Show the running logs.
 
 main.Install_code_server_extension(extension='ms-python.anaconda-extension-pack')
+```
+
+You can also config code server through `ColabGeek.Config_code_server` method.
+
+```python
+# ColabGeek.Config_code_server has the following parameters:
+# - property Matching the key in settings.json config file.
+# - value Matching the value in settings.json config file.
+
+main.Config_code_server(property='workbench.colorTheme',value='Default Dark+')
+main.Config_code_server(property='editor.fontSize',value=18)
+main.Config_code_server(property='terminal.integrated.fontSize',value=18)
+main.Config_code_server(property='files.autoSave',value='off')
 ```
 
 ### Run Rstudio server
@@ -102,4 +118,4 @@ main.Run_shadowsocks()
 
 ## Statement
 
-ColabGeek violated numerous community rules of Google Colab. But still, I developed ColabGeek, because the simple Jupyter interface just does not meet the requirements of many software applications and is not user-friendly for coding in non-Python languages. I recommend all ColabGeek users can purchase Colab Pro or Pro+ to support the excellent services provided by Google. Keep in mind, avoid misuse and Don't Be Evil.
+ColabGeek violated numerous community rules of Google Colab. But still, I developed ColabGeek, because the simple Jupyter interface just does not meet the requirements of many software applications and is not user-friendly for coding in non-Python languages. I recommend all ColabGeek users purchase Colab Pro or Pro+ to support the excellent services provided by Google. Keep in mind, avoid misuse and Don't Be Evil.
