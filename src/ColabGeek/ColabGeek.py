@@ -4,6 +4,7 @@ import dependent modules.
 import os
 import sys
 import time
+import json
 
 '''
 define ColabSession class
@@ -162,6 +163,27 @@ class ColabSession:
         if verbose:
             exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
+
+    def Config_code_server(self,property,value):
+        # check whether settings.json exists
+        file_path = "/home/" + str(self.user) + "/.local/share/code-server/User"
+        char_cmd = "sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + file_path
+        os.system(char_cmd)
+        file_path = file_path + "/settings.json"
+        if os.path.exists(file_path):
+            with open(file_path,"r") as json_file:
+                json_setting = json.load(json_file)
+        else:
+            char_cmd = "sudo -u" + " " + str(self.user) + " " + "touch" + " " + file_path
+            os.system(char_cmd)
+            json_setting = {}
+
+        # add property
+        json_setting[str(property)] = value
+
+        # dump settings
+        with open(file_path,"w") as json_file:
+            json.dump(json_setting,json_file,indent=4)
             
     '''
     proxy method
