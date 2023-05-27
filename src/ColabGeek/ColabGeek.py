@@ -138,6 +138,8 @@ class ColabSession:
     # run code server
     def Run_code_server(self,port = None,password = None,verbose = True):
         # check param
+        if (str(self.user) == 'root'):
+            raise RootUserError()
         if (port is None):
             port = self.port
         if (password is None):
@@ -209,6 +211,10 @@ class ColabSession:
     '''
     # install Homebrew
     def Install_Homebrew(self,verbose = True):
+        # check param
+        if (str(self.user) == 'root'):
+            raise RootUserError()
+
         # install expect
         os.system("apt install expect -y")
 
@@ -225,6 +231,10 @@ class ColabSession:
 
     # install rbenv
     def Install_rbenv(self,verbose = True):
+        # check param
+        if (str(self.user) == 'root'):
+            raise RootUserError()
+
         # install expect
         os.system("apt install expect -y")
 
@@ -242,6 +252,8 @@ class ColabSession:
     # install Ruby
     def Install_Ruby(self,version = None,verbose = True):
         # check param
+        if (str(self.user) == 'root'):
+            raise RootUserError()
         if (version is None):
             version = input("Input the Ruby version to install: ")
 
@@ -261,6 +273,10 @@ class ColabSession:
 
     # install Jekyll
     def Install_Jekyll(self,version = None,verbose = True):
+        # check param
+        if (str(self.user) == 'root'):
+            raise RootUserError()
+            
         # install dependency
         if verbose:
             print("Install Homebrew: \n")
@@ -309,3 +325,13 @@ def update_environment():
     os.system("apt update")
     os.system("apt upgrade -y")
     os.system("apt autoremove -y")
+
+'''
+define Exception class
+'''
+# RootUserError
+class RootUserError(Exception):
+    """Exception raised when the user is root."""
+
+    def __init__(self,message = 'Cannot proceed under user root!'):
+        super().__init__(message)
