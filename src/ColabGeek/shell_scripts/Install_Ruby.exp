@@ -1,0 +1,26 @@
+#!/usr/bin/expect
+
+set timeout -1
+set user_name [lindex $argv 0]
+set user_password [lindex $argv 1]
+set Ruby_version [lindex $argv 2]
+set tmp_path [lindex $argv 3]
+
+spawn su $user_name
+expect "\\\$"
+send "cd /tmp/$tmp_path\r"
+expect "\\\$"
+
+# install Ruby
+send "rbenv install $Ruby_version\r"
+expect "\\\$"
+
+# add Ruby to PATH
+set temp_var "rbenv global $Ruby_version"
+send "echo $temp_var >> /home/$user_name/.bashrc\r"
+expect "\\\$"
+
+send "exit\r"
+expect "*"
+send "exit\r"
+expect eof
