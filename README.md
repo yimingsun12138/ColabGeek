@@ -116,6 +116,18 @@ Although not allowed by Google and not recommended by myself, building a proxy s
 main.Run_shadowsocks()
 ```
 
+### Jekyll
+
+[Jekyll](https://jekyllrb.com/) is a simple, blog-aware, static site generator that allows users to create their own websites or blogs without the need for databases or server-side programming languages. It takes text written in Markdown, processes it through a template engine, and generates a ready-to-publish static website. ColabGeek now provides a method to automatically install Jekyll and all of its dependencies. Users can easily access their Jekyll sites using tunneling methods, also provided by ColabGeek.
+
+```python
+# ColabGeek.Install_Jekyll has the following parameters:
+# - version Which version of Ruby you would like to install? The latest stable version is recommended.
+# - verbose Show the running logs.
+
+main.Install_Jekyll(version='3.2.2',verbose=True)
+```
+
 ## Statement
 
 ColabGeek violated numerous community rules of Google Colab. But still, I developed ColabGeek, because the simple Jupyter interface just does not meet the requirements of many software applications and is not user-friendly for coding in non-Python languages. I recommend all ColabGeek users purchase Colab Pro or Pro+ to support the excellent services provided by Google. Keep in mind, avoid misuse and Don't Be Evil.
