@@ -1,0 +1,20 @@
+#!/usr/bin/expect
+
+set timeout -1
+set user_name [lindex $argv 0]
+set user_password [lindex $argv 1]
+set tmp_path [lindex $argv 2]
+
+spawn su $user_name
+expect "\\\$"
+send "cd /tmp/$tmp_path\r"
+expect "\\\$"
+
+# install Jekyll
+send "gem install bundler jekyll\r"
+expect "\\\$"
+
+send "exit\r"
+expect "*"
+send "exit\r"
+expect eof

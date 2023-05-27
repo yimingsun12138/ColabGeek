@@ -205,6 +205,86 @@ class ColabSession:
         os.system(char_cmd)
 
     '''
+    Jekyll method
+    '''
+    # install Homebrew
+    def Install_Homebrew(self,verbose = True):
+        # install expect
+        os.system("apt install expect -y")
+
+        # get shell script path
+        script_path = os.path.dirname(__file__)
+        script_path = os.path.join(script_path,'shell_scripts','Install_Homebrew.exp')
+
+        # run expect script
+        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
+        exec_logging = os.popen(char_cmd)
+        if verbose:
+            exec_logging = ''.join(exec_logging.readlines())
+            print(exec_logging)
+
+    # install rbenv
+    def Install_rbenv(self,verbose = True):
+        # install expect
+        os.system("apt install expect -y")
+
+        # get shell script path
+        script_path = os.path.dirname(__file__)
+        script_path = os.path.join(script_path,'shell_scripts','Install_rbenv.exp')
+
+        # run expect script
+        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
+        exec_logging = os.popen(char_cmd)
+        if verbose:
+            exec_logging = ''.join(exec_logging.readlines())
+            print(exec_logging)
+
+    # install Ruby
+    def Install_Ruby(self,version = None,verbose = True):
+        # check param
+        if (version is None):
+            version = input("Input the Ruby version to install: ")
+
+        # install expect
+        os.system("apt install expect -y")
+
+        # get shell script path
+        script_path = os.path.dirname(__file__)
+        script_path = os.path.join(script_path,'shell_scripts','Install_Ruby.exp')
+
+        # run expect script
+        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(version) + " " + str(self.path)
+        exec_logging = os.popen(char_cmd)
+        if verbose:
+            exec_logging = ''.join(exec_logging.readlines())
+            print(exec_logging)
+
+    # install Jekyll
+    def Install_Jekyll(self,version = None,verbose = True):
+        # install dependency
+        if verbose:
+            print("Install Homebrew: \n")
+        self.Install_Homebrew(verbose = verbose)
+        if verbose:
+            print("Install rbenv: \n")
+        self.Install_rbenv(verbose = verbose)
+        if verbose:
+            print("Install Ruby: \n")
+        self.Install_Ruby(version = version,verbose = verbose)
+
+        # get shell script path
+        script_path = os.path.dirname(__file__)
+        script_path = os.path.join(script_path,'shell_scripts','Install_Jekyll.exp')
+
+        # run expect script
+        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
+        exec_logging = os.popen(char_cmd)
+        if verbose:
+            print("Install Jekyll: \n")
+            exec_logging = ''.join(exec_logging.readlines())
+            print(exec_logging)
+            
+    '''
     other method
     '''
     # keep Colab session busy
