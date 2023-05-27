@@ -131,8 +131,8 @@ class ColabSession:
         # run Rstudio server
         char_cmd = "bash" + " " + str(script_path) + " " + str(self.path) + " " + str(port)
         exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
         if verbose:
-            exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
 
     # run code server
@@ -153,15 +153,15 @@ class ColabSession:
         # run code server
         char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(port) + " " + str(password) + " " + str(self.path)
         exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
         if verbose:
-            exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
 
     def Install_code_server_extension(self,extension,verbose = True):
         char_cmd = "sudo -u" + " " + str(self.user) + " " + "code-server --install-extension" + " " + str(extension)
         exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
         if verbose:
-            exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
 
     def Config_code_server(self,property,value):
@@ -219,8 +219,8 @@ class ColabSession:
         # run expect script
         char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
         exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
         if verbose:
-            exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
 
     # install rbenv
@@ -235,8 +235,8 @@ class ColabSession:
         # run expect script
         char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
         exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
         if verbose:
-            exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
 
     # install Ruby
@@ -255,8 +255,8 @@ class ColabSession:
         # run expect script
         char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(version) + " " + str(self.path)
         exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
         if verbose:
-            exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
 
     # install Jekyll
@@ -279,9 +279,9 @@ class ColabSession:
         # run expect script
         char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
         exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
         if verbose:
             print("Install Jekyll: \n")
-            exec_logging = ''.join(exec_logging.readlines())
             print(exec_logging)
             
     '''
