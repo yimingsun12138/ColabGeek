@@ -5,8 +5,8 @@ cd /tmp/$1
 
 # install
 apt install gdebi-core -y
-wget https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2023.03.0-386-amd64.deb
-gdebi -n rstudio-server-2023.03.0-386-amd64.deb
+wget https://download2.rstudio.org/server/focal/amd64/rstudio-server-2023.06.1-524-amd64.deb
+gdebi -n rstudio-server-2023.06.1-524-amd64.deb
 
 # config Rstudio server port
 temp_var="www-port=$2"
