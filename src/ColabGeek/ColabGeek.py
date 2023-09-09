@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import json
+import warnings
 
 '''
 define ColabSession class
@@ -38,8 +39,10 @@ class ColabSession:
             user_list[i] = user_list[i].replace("\n","")
         if (str(self.user) not in user_list):
             os.system("useradd -m -s /bin/bash" + " " + str(self.user))
+
         # change user passwd
         os.system("echo '" + str(self.user) + ":" + str(self.password) + "' | chpasswd")
+
         # add sudo permission
         if self.sudo:
             os.system("usermod -G sudo" + " " + str(self.user))
@@ -59,15 +62,21 @@ class ColabSession:
     tunnelling method
     '''
     # tunnelling with localtunnel
-    def Run_localtunnel(self,port = None,host = "https://localtunnel.me",subdomain = None):
+    def Run_localtunnel(self,port = None,host = "https://localtunnel.me",subdomain = None,verbose = True):
         # check param
         if (port is None):
             port = self.port
 
         # install localtunnel
         if(len(os.popen("which npm").readlines()) == 0):
-            os.system("apt install nodejs npm -y")
-        os.system("npm install -g localtunnel")
+            exec_logging = os.popen("apt install nodejs npm -y")
+            exec_logging = ''.join(exec_logging.readlines())
+            if verbose:
+                print(exec_logging)
+        exec_logging = os.popen("npm install -g localtunnel")
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
 
         # exec cmd
         char_cmd = "lt --port" + " " + str(port) + " " + "--host" + " " + str(host)
@@ -85,7 +94,7 @@ class ColabSession:
         return(lt_url)
 
     # tunnelling with ngrok
-    def Run_ngrok(self,token = None,port = None,domain = None):
+    def Run_ngrok(self,token = None,port = None,domain = None,verbose = True):
         # check param
         if (token is None):
             token = input("Input your ngrok token: ")
@@ -94,7 +103,10 @@ class ColabSession:
 
         # install ngrok
         char_cmd = 'curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc > /dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok'
-        os.system(char_cmd)
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
 
         # auth
         char_cmd = "ngrok config add-authtoken" + " " + str(token)
@@ -146,7 +158,10 @@ class ColabSession:
             password = self.password
 
         # install expect
-        os.system("apt install expect -y")
+        exec_logging = os.popen("apt install expect -y")
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
@@ -191,7 +206,7 @@ class ColabSession:
     proxy method
     '''
     # run shadowsocks
-    def Run_shadowsocks(self,port = None,password = None,encrypt = 'aes-256-gcm'):
+    def Run_shadowsocks(self,port = None,password = None,encrypt = 'aes-256-gcm',verbose = True):
         # check param
         if (port is None):
             port = self.port
@@ -199,7 +214,10 @@ class ColabSession:
             password = self.password
 
         # install shadowsocks
-        os.system("apt install shadowsocks-libev -y")
+        exec_logging = os.popen("apt install shadowsocks-libev -y")
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
 
         # run shadowsocks
         char_cmd = "ss-server" + " " + "-s 0.0.0.0" + " " + "-p" + " " + str(port) + " " + "-k" + " " + str(password) + " " + "-m" + " " + str(encrypt)
@@ -216,7 +234,10 @@ class ColabSession:
             raise RootUserError()
 
         # install expect
-        os.system("apt install expect -y")
+        exec_logging = os.popen("apt install expect -y")
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
@@ -236,7 +257,10 @@ class ColabSession:
             raise RootUserError()
 
         # install expect
-        os.system("apt install expect -y")
+        exec_logging = os.popen("apt install expect -y")
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
@@ -258,7 +282,10 @@ class ColabSession:
             version = input("Input the Ruby version to install: ")
 
         # install expect
-        os.system("apt install expect -y")
+        exec_logging = os.popen("apt install expect -y")
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
@@ -299,7 +326,57 @@ class ColabSession:
         if verbose:
             print("Install Jekyll: \n")
             print(exec_logging)
-            
+
+    '''
+    stable diffusion method
+    '''
+    # run stable diffusion webui
+    def Run_stable_diffusion_webui(self,port = None,verbose = True,args = None,**kwargs):
+        # check param
+        if (port is None):
+            port = self.port
+
+        # install dependency
+        exec_logging = os.popen("apt install wget git python3 python3-venv libgl1 libglib2.0-0 -y")
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
+
+        # install stable diffusion webui
+        char_cmd = "wget" + " " + "-q" + " " + "-O" + " " + "/tmp/" + str(self.path) + "/webui.sh" + " " + "https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh"
+        os.system(char_cmd)
+        char_cmd = "chmod" + " " + "a+x" + " " + "/tmp/" + str(self.path) + "/webui.sh"
+        os.system(char_cmd)
+        char_cmd = "/tmp/" + str(self.path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port) + " " + "--exit"
+        if (args is None):
+            for k,v in kwargs.items():
+                char_cmd = char_cmd + " " + "--" + str(k)
+                if (str(v) != ''):
+                    char_cmd = char_cmd + " " + str(v)
+        else:
+            if (len(kwargs) > 0):
+                warnings.warn(message = "Extra arguments will be discarded when using the args parameter!",category = UserWarning)
+            char_cmd = char_cmd + " " + str(args)
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print(exec_logging)
+
+        # run stable diffusion webui
+        char_cmd = "/tmp/" + str(self.path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port)
+        if (args is None):
+            for k,v in kwargs.items():
+                char_cmd = char_cmd + " " + "--" + str(k)
+                if (str(v) != ''):
+                    char_cmd = char_cmd + " " + str(v)
+        else:
+            char_cmd = char_cmd + " " + str(args)
+        char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/stable_diffusion_webui.log 2>&1 &"
+        os.system(char_cmd)
+        os.system("sleep 30")
+        exec_logging = "stable diffusion webui log file" + ":" + " " + "/tmp/" + str(self.path) + "/stable_diffusion_webui.log."
+        print(exec_logging)
+
     '''
     other method
     '''
@@ -321,11 +398,20 @@ class ColabSession:
 define other method
 '''
 # update environment
-def update_environment():
-    os.system("apt update")
-    os.system("apt upgrade -y")
-    os.system("apt autoremove -y")
-
+def update_environment(verbose = True):
+    exec_logging = os.popen("apt update")
+    exec_logging = ''.join(exec_logging.readlines())
+    if verbose:
+        print(exec_logging)
+    exec_logging = os.popen("apt upgrade -y")
+    exec_logging = ''.join(exec_logging.readlines())
+    if verbose:
+        print(exec_logging)
+    exec_logging = os.popen("apt autoremove -y")
+    exec_logging = ''.join(exec_logging.readlines())
+    if verbose:
+        print(exec_logging)
+        
 '''
 define Exception class
 '''
