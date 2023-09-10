@@ -86,6 +86,7 @@ Google Colab does not allow any internet connections to their servers except the
 # - port The port you want to expose to localtunnel, set to None and you will use the default port.
 # - host Check the localtunnel document.
 # - subdomain The customized localtunnel URL, check the localtunnel document. (Do not include '_' in the subdomain!)
+# - verbose Show the running logs.
 
 main.Run_localtunnel()
 ```
@@ -97,6 +98,7 @@ main.Run_localtunnel()
 # - token The token of your personal ngrok account. Sign up one, it is free.
 # - port The port you want to expose to ngrok, set to None and you will use the default port.
 # - domain The customized ngrok URL, check the ngrok document.
+# - verbose Show the running logs.
 
 main.Run_ngrok()
 ```
@@ -112,6 +114,7 @@ Although not allowed by Google and not recommended by myself, building a proxy s
 # - port The server port of shadowsocks, set to None and you will use the default port.
 # - password The shadowsocks password.
 # - encrypt The shadowsocks encrypt method.
+# - verbose Show the running logs.
 
 main.Run_shadowsocks()
 ```
@@ -126,6 +129,25 @@ main.Run_shadowsocks()
 # - verbose Show the running logs.
 
 main.Install_Jekyll(version='3.2.2',verbose=True)
+```
+
+### Stable Diffusion WebUI
+
+[Stable Diffusion](https://github.com/CompVis/stable-diffusion) is a deep learning, text-to-image model released in 2022 based on diffusion techniques. It is primarily used to generate detailed images conditioned on text descriptions, though it can also be applied to other tasks such as inpainting, outpainting, and generating image-to-image translations guided by a text prompt. [Stable Diffusion WebUI](https://github.com/AUTOMATIC1111/stable-diffusion-webui) is a browser interface for Stable Diffusion that allows to create beautiful art much more easily. Stable Diffusion WebUI can be easily installed through ColabGeek and conveniently accessed using the tunneling method also provided by ColabGeek.
+
+```python
+# ColabGeek.Run_stable_diffusion_webui has the following parameters:
+# - path The installation path for Stable Diffusion WebUI, which is defaulted to /tmp.
+# - port The port you want to run the browser interface on, set to None to use the default port.
+# - verbose Show the running logs.
+# - args Custom parameters for installing and running Stable Diffusion WebUI.
+# - **kwargs Custom parameters for installing and running Stable Diffusion WebUI. Cannot be used in conjunction with the args parameter.
+
+main.Run_stable_diffusion_webui()
+
+# Use tunneling method built in Stable Diffusion WebUI:
+# main.Run_stable_diffusion_webui(args='--share --gradio-auth username:password')
+# main.Run_stable_diffusion_webui(share='')
 ```
 
 ## Statement

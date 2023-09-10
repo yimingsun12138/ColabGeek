@@ -56,7 +56,7 @@ class ColabSession:
     # create tmp path method
     def tmp_path(self):
         self.path = ((os.popen("date +%Y%m%d_%H%M%S").readlines())[0]).replace("\n","")
-        os.system("sudo -u" + " " + str(self.user) + " " + "mkdir /tmp/" + str(self.path))
+        os.system("sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + "/tmp/" + str(self.path))
         
     '''
     tunnelling method
