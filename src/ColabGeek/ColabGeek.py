@@ -331,10 +331,15 @@ class ColabSession:
     stable diffusion method
     '''
     # run stable diffusion webui
-    def Run_stable_diffusion_webui(self,port = None,verbose = True,args = None,**kwargs):
+    def Run_stable_diffusion_webui(self,path = None,port = None,verbose = True,args = None,**kwargs):
         # check param
         if (port is None):
             port = self.port
+        if (path is None):
+            path = "/tmp/" + str(self.path)
+        else:
+            char_cmd = "sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + str(path)
+            os.system(char_cmd)
 
         # install dependency
         exec_logging = os.popen("apt install wget git python3 python3-venv libgl1 libglib2.0-0 -y")
@@ -343,11 +348,11 @@ class ColabSession:
             print(exec_logging)
 
         # install stable diffusion webui
-        char_cmd = "wget" + " " + "-q" + " " + "-O" + " " + "/tmp/" + str(self.path) + "/webui.sh" + " " + "https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh"
+        char_cmd = "wget" + " " + "-q" + " " + "-O" + " " + str(path) + "/webui.sh" + " " + "https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh"
         os.system(char_cmd)
-        char_cmd = "chmod" + " " + "a+x" + " " + "/tmp/" + str(self.path) + "/webui.sh"
+        char_cmd = "chmod" + " " + "a+x" + " " + str(path) + "/webui.sh"
         os.system(char_cmd)
-        char_cmd = "/tmp/" + str(self.path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port) + " " + "--exit"
+        char_cmd = str(path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port) + " " + "--exit"
         if (args is None):
             for k,v in kwargs.items():
                 char_cmd = char_cmd + " " + "--" + str(k)
@@ -363,7 +368,7 @@ class ColabSession:
             print(exec_logging)
 
         # run stable diffusion webui
-        char_cmd = "/tmp/" + str(self.path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port)
+        char_cmd = str(path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port)
         if (args is None):
             for k,v in kwargs.items():
                 char_cmd = char_cmd + " " + "--" + str(k)
