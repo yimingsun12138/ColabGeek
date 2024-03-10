@@ -1,23 +1,110 @@
-'''
-import dependent modules.
-'''
+"""
+ColabGeek helps to run useful tools on Google Colab.
+Dependencies include os, sys, time, json and warnings.
+
+Classes:
+ - ColabSession: Class corresponding to the current Colab session.
+
+Exceptions:
+ - RootUserError: Raise exception when the user is root.
+
+Methods:
+ - update_environment: Update Ubuntu system environment.
+"""
 import os
 import sys
 import time
 import json
 import warnings
 
-'''
-define ColabSession class
-'''
 class ColabSession:
+    """
+    Class corresponding to the current Colab session.
+
+    Initialize Colab session and provide methods to run useful tools on Colab.
+
+    Attributes
+    ----------
+    user : str
+        User name.
+    password : str
+        User password.
+    sudo : bool
+        Whether to give sudo permission to the user.
+    port : int
+        Which port to use for tunnelling.
+    mount_GD : bool
+        Whether to mount Google Drive.
+    keep_busy : bool
+        Whether to keep the Colab session busy to prevent termination.
+    path : str
+        Path to a temporary directory.
+
+    Methods
+    -------
+    add_user()
+        Add or modify a user to the system.
+    Google_Drive()
+        Mount Google Drive if mount_GD is set to True.
+    tmp_path()
+        Create a temporary directory in /tmp.
+    Run_localtunnel(port = None,host = "https://localtunnel.me",subdomain = None,verbose = True)
+        Install and run localtunnel for tunnelling.
+    Run_ngrok(token = None,port = None,domain = None,verbose = True)
+        Install and run ngrok for tunnelling.
+    Run_Rstudio_server(port = None,verbose = True)
+        Install and run Rstudio Server on Colab.
+    Run_code_server(port = None,password = None,verbose = True)
+        Install and run code server on Colab.
+    Install_code_server_extension(extension,verbose = True)
+        Install code server extensions.
+    Config_code_server(property,value)
+        Configure code server.
+    Run_shadowsocks(port = None,password = None,encrypt = 'aes-256-gcm',verbose = True)
+        Install and run shadowsocks on Colab.
+    Install_Homebrew(verbose = True)
+        Install Homebrew on Colab.
+    Install_rbenv(verbose = True)
+        Install rbenv on Colab.
+    Install_Ruby(version = None,verbose = True)
+        Install Ruby on Colab.
+    Install_Jekyll(version = None,verbose = True)
+        Install and run Jekyll on Colab.
+    Run_stable_diffusion_webui(path = None,port = None,verbose = True,args = None,**kwargs)
+        Install and run stable diffusion webui on Colab.
+    busy_session(busy = None)
+        Keep the Colab session busy if keep_busy is set to True.
+    """
+    
     def __init__(self,user,password,sudo = True,port = 8787,mount_GD = False,keep_busy = True):
+        """
+        Initialize the ColabSession object.
+
+        Initialize the ColabSession object by adding the system user, mounting Google Drive and setting temp directory.
+
+        Parameters
+        ----------
+        user : str
+            User name.
+        password : str
+            User password.
+        sudo : bool, optional
+            Whether to give sudo permission to the user.
+        port : int, optional
+            Which port to use for tunnelling.
+        mount_GD : bool, optional
+            Whether to mount Google Drive.
+        keep_busy : bool, optional
+            Whether to keep the Colab session busy to prevent termination.
+        """
+
         self.user = user
         self.password = password
         self.sudo = sudo
         self.port = port
         self.mount_GD = mount_GD
         self.keep_busy = keep_busy
+        self.path = None
 
         # add user
         self.add_user()
@@ -28,11 +115,16 @@ class ColabSession:
         # create tmp path
         self.tmp_path()
 
-    '''
-    init methods
-    '''
+    ##################
+    ## init methods ##
+    ##################
+
     # add user method
     def add_user(self):
+        """
+        Add or modify a user to the system.
+        """
+
         # check user list
         user_list = os.popen("getent passwd | awk -F: '{print $1}'").readlines()
         for i in range(0,len(user_list)):
@@ -49,20 +141,53 @@ class ColabSession:
 
     # mount Google Drive method
     def Google_Drive(self):
+        """
+        Mount Google Drive if mount_GD is set to True.
+        """
+
         if self.mount_GD:
             from google.colab import drive
             drive.mount('/content/drive')
 
     # create tmp path method
     def tmp_path(self):
+        """
+        Create a temporary directory in /tmp.
+        """
+
         self.path = ((os.popen("date +%Y%m%d_%H%M%S").readlines())[0]).replace("\n","")
         os.system("sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + "/tmp/" + str(self.path))
-        
-    '''
-    tunnelling method
-    '''
+
+    ########################
+    ## tunnelling methods ##
+    ########################
+
     # tunnelling with localtunnel
     def Run_localtunnel(self,port = None,host = "https://localtunnel.me",subdomain = None,verbose = True):
+        """
+        Install and run localtunnel for tunnelling.
+
+        Apart from the Colab notebook, Google Colab prohibits any network connections to the host server.
+        Therefore, a tunnelling method is required to access services installed on Colab.
+        This function helps to install and run localtunnel for tunnelling.
+
+        parameters
+        ----------
+        port : int, optional
+            Listening port for localtunnel.
+        host : str, optional
+            Upstream server providing forwarding.
+        subdomain : str, optional
+            Request this subdomain. Do not include the '_' in the subdomain.
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Returns
+        -------
+        str
+            The localtunnel forwarding url.
+        """
+
         # check param
         if (port is None):
             port = self.port
@@ -72,10 +197,12 @@ class ColabSession:
             exec_logging = os.popen("apt install nodejs npm -y")
             exec_logging = ''.join(exec_logging.readlines())
             if verbose:
+                print("Install nodejs and npm: \n")
                 print(exec_logging)
         exec_logging = os.popen("npm install -g localtunnel")
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install localtunnel: \n")
             print(exec_logging)
 
         # exec cmd
@@ -95,6 +222,30 @@ class ColabSession:
 
     # tunnelling with ngrok
     def Run_ngrok(self,token = None,port = None,domain = None,verbose = True):
+        """
+        Install and run ngrok for tunnelling.
+
+        Apart from the Colab notebook, Google Colab prohibits any network connections to the host server.
+        Therefore, a tunnelling method is required to access services installed on Colab.
+        This function helps to install and run ngrok for tunnelling.
+
+        Parameters
+        ----------
+        token : str, optional
+            The token of your personal ngrok account.
+        port : int, optional
+            Listening port for ngrok.
+        domain : str, optional
+            Request this domain.
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Returns
+        -------
+        str
+            The ngrok forwarding url.
+        """
+
         # check param
         if (token is None):
             token = input("Input your ngrok token: ")
@@ -106,6 +257,7 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install ngrok: \n")
             print(exec_logging)
 
         # auth
@@ -127,11 +279,27 @@ class ColabSession:
         ngrok_url = ((ngrok_url.readlines())[0]).replace("\n","")
         return(ngrok_url)
 
-    '''
-    web IDE methods
-    '''
+    #####################
+    ## web IDE methods ##
+    #####################
+
     # run Rstudio server
     def Run_Rstudio_server(self,port = None,verbose = True):
+        """
+        Install and run Rstudio Server on Colab.
+
+        The Colab notebook is an excellent integrated development environment for Python.
+        Although it can also run the R kernel, using the Rstudio Server for data analysis provides a more comfortable experience.
+        This function helps to install and run Rstudio Server on Colab.
+
+        Parameters
+        ----------
+        port : int, optional
+            Listening port for Rstudio Server.
+        verbose : bool, optional
+            Whether to show the running logs.
+        """
+
         # check param
         if (port is None):
             port = self.port
@@ -145,10 +313,33 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install Rstudio Server: \n")
             print(exec_logging)
 
     # run code server
     def Run_code_server(self,port = None,password = None,verbose = True):
+        """
+        Install and run code server on Colab.
+
+        The code server is an online integrated development environment with a VSCode style.
+        It supports development in multiple languages and a variety of VSCode plugins.
+        This function helps to install and run code server on Colab.
+
+        Parameters
+        ----------
+        port : int, optional
+            Listening port for code server.
+        password : str, optional
+            The code server login password.
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Raises
+        ------
+        RootUserError
+            If the ColabSession user is root.
+        """
+
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
@@ -161,6 +352,7 @@ class ColabSession:
         exec_logging = os.popen("apt install expect -y")
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install expect: \n")
             print(exec_logging)
 
         # get shell script path
@@ -172,16 +364,47 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install code server: \n")
             print(exec_logging)
 
+    # install code server plugins
     def Install_code_server_extension(self,extension,verbose = True):
+        """
+        Install code server extensions.
+
+        The code server supports a variety of VSCode plugins.
+        This function helps to install code server extensions through command line.
+
+        Parameters
+        ----------
+        extension : str
+            The extension id or the path of the VSIX file.
+        verbose : bool, optional
+            Whether to show the running logs.
+        """
+
         char_cmd = "sudo -u" + " " + str(self.user) + " " + "code-server --install-extension" + " " + str(extension)
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install" + " " + str(extension) + ": \n")
             print(exec_logging)
 
+    # configure code server
     def Config_code_server(self,property,value):
+        """
+        Configure code server.
+
+        This function updates the `settings.json` file for the code server instance by adding a specified property-value pair.
+
+        Parameters
+        ----------
+        property : str
+            Specify the property to be added or updated in the `settings.json` file.
+        value : str
+            Specify the value for the corresponding property.
+        """
+
         # check whether settings.json exists
         file_path = "/home/" + str(self.user) + "/.local/share/code-server/User"
         char_cmd = "sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + file_path
@@ -201,12 +424,30 @@ class ColabSession:
         # dump settings
         with open(file_path,"w") as json_file:
             json.dump(json_setting,json_file,indent=4)
-            
-    '''
-    proxy method
-    '''
+
+    ###################
+    ## proxy methods ##
+    ###################
+
     # run shadowsocks
     def Run_shadowsocks(self,port = None,password = None,encrypt = 'aes-256-gcm',verbose = True):
+        """
+        Install and run shadowsocks on Colab.
+
+        This function is used to set up the shadowsocks server, which is a secure socks5 proxy.
+
+        Parameters
+        ----------
+        port : int, optional
+            Listening port for shadowsocks server.
+        password : str, optional
+            The shadowsocks server password.
+        encrypt : str, optional
+            The encryption method for shadowsocks server.
+        verbose : bool, optional
+            Whether to show the running logs.
+        """
+
         # check param
         if (port is None):
             port = self.port
@@ -217,6 +458,7 @@ class ColabSession:
         exec_logging = os.popen("apt install shadowsocks-libev -y")
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install shadowsocks-libev: \n")
             print(exec_logging)
 
         # run shadowsocks
