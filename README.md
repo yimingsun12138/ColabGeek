@@ -125,10 +125,10 @@ main.Run_shadowsocks()
 
 ```python
 # ColabGeek.Install_Jekyll has the following parameters:
-# - version Which version of Ruby you would like to install? The latest stable version is recommended.
+# - Ruby_version Which version of Ruby you would like to install? The latest stable version is recommended.
 # - verbose Show the running logs.
 
-main.Install_Jekyll(version='3.2.2',verbose=True)
+main.Install_Jekyll(Ruby_version='3.2.2',verbose=True)
 ```
 
 ### Stable Diffusion WebUI

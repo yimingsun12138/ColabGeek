@@ -6,16 +6,21 @@ Classes:
  - ColabSession: Class corresponding to the current Colab session.
 
 Exceptions:
- - RootUserError: Raise exception when the user is root.
+ - RootUserError: Raise exception when the ColabSession user is root.
 
 Methods:
  - update_environment: Update Ubuntu system environment.
 """
+
 import os
 import sys
 import time
 import json
 import warnings
+
+###############################
+## define ColabSession Class ##
+###############################
 
 class ColabSession:
     """
@@ -68,12 +73,12 @@ class ColabSession:
         Install rbenv on Colab.
     Install_Ruby(version = None,verbose = True)
         Install Ruby on Colab.
-    Install_Jekyll(version = None,verbose = True)
+    Install_Jekyll(Ruby_version = None,verbose = True)
         Install and run Jekyll on Colab.
     Run_stable_diffusion_webui(path = None,port = None,verbose = True,args = None,**kwargs)
-        Install and run stable diffusion webui on Colab.
+        Install and run Stable Diffusion WebUI on Colab.
     busy_session(busy = None)
-        Keep the Colab session busy if keep_busy is set to True.
+        Keep the Colab session active.
     """
     
     def __init__(self,user,password,sudo = True,port = 8787,mount_GD = False,keep_busy = True):
@@ -466,11 +471,28 @@ class ColabSession:
         char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/shadowsocks.log 2>&1 &"
         os.system(char_cmd)
 
-    '''
-    Jekyll method
-    '''
+    ####################
+    ## Jekyll methods ##
+    ####################
+
     # install Homebrew
     def Install_Homebrew(self,verbose = True):
+        """
+        Install Homebrew on Colab.
+
+        Homebrew is a package manager for macOS and Linux. This function helps to install Homebrew on Colab.
+
+        Parameters
+        ----------
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Raises
+        ------
+        RootUserError
+            If the ColabSession user is root.
+        """
+
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
@@ -479,6 +501,7 @@ class ColabSession:
         exec_logging = os.popen("apt install expect -y")
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install expect: \n")
             print(exec_logging)
 
         # get shell script path
@@ -490,10 +513,28 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print('Install Homebrew: \n')
             print(exec_logging)
 
     # install rbenv
     def Install_rbenv(self,verbose = True):
+        """
+        Install rbenv on Colab.
+
+        The rbenv is a Ruby version manager, which allows for easy installation of multiple versions of Ruby.
+        This function helps to install rbenv on Colab by Homebrew.
+
+        Parameters
+        ----------
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Raises
+        ------
+        RootUserError
+            If the ColabSession user is root.
+        """
+
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
@@ -502,6 +543,7 @@ class ColabSession:
         exec_logging = os.popen("apt install expect -y")
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install expect: \n")
             print(exec_logging)
 
         # get shell script path
@@ -513,10 +555,29 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install rbenv: \n")
             print(exec_logging)
 
     # install Ruby
     def Install_Ruby(self,version = None,verbose = True):
+        """
+        Install Ruby on Colab.
+
+        This function helps to install a specified version of Ruby using rbenv.
+
+        Parameters
+        ----------
+        version : str, optional
+            The version number of Ruby to install.
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Raises
+        ------
+        RootUserError
+            If the ColabSession user is root.
+        """
+
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
@@ -527,6 +588,7 @@ class ColabSession:
         exec_logging = os.popen("apt install expect -y")
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install expect: \n")
             print(exec_logging)
 
         # get shell script path
@@ -538,24 +600,38 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install Ruby: \n")
             print(exec_logging)
 
     # install Jekyll
-    def Install_Jekyll(self,version = None,verbose = True):
+    def Install_Jekyll(self,Ruby_version = None,verbose = True):
+        """
+        Install and run Jekyll on Colab.
+
+        Jekyll is a simple, blog-aware, static site generator suited for personal, project or organizational sites.
+        This function helps to install and run Jekyll on Colab.
+
+        Parameters
+        ----------
+        Ruby_version : str, optional
+            The version number of Ruby to install.
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Raises
+        ------
+        RootUserError
+            If the ColabSession user is root.
+        """
+
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
             
         # install dependency
-        if verbose:
-            print("Install Homebrew: \n")
         self.Install_Homebrew(verbose = verbose)
-        if verbose:
-            print("Install rbenv: \n")
         self.Install_rbenv(verbose = verbose)
-        if verbose:
-            print("Install Ruby: \n")
-        self.Install_Ruby(version = version,verbose = verbose)
+        self.Install_Ruby(version = Ruby_version,verbose = verbose)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
@@ -569,11 +645,38 @@ class ColabSession:
             print("Install Jekyll: \n")
             print(exec_logging)
 
-    '''
-    stable diffusion method
-    '''
+    ##############################
+    ## stable diffusion methods ##
+    ##############################
+
     # run stable diffusion webui
     def Run_stable_diffusion_webui(self,path = None,port = None,verbose = True,args = None,**kwargs):
+        """
+        Install and run Stable Diffusion WebUI on Colab.
+
+        Stable Diffusion WebUI is a browser interface for Stable Diffusion that allows to generate AI art more easily.
+        This function helps to install and run Stable Diffusion WebUI on Colab.
+
+        Parameters
+        ----------
+        path : str, optional
+            The directory to install Stable Diffusion WebUI.
+        port : int, optional
+            Listening port for Stable Diffusion WebUI.
+        verbose : bool, optional
+            Whether to show the running logs.
+        args : str, optional
+            Additional arguments to pass to the Stable Diffusion WebUI setup script.
+        **kwargs : dict, optional
+            Additional arguments to pass to the Stable Diffusion WebUI setup script.
+            Cannot be used in conjunction with the `args` parameter.
+
+        Returns
+        -------
+        str
+            The path for the Stable Diffusion WebUI log file.
+        """
+
         # check param
         if (port is None):
             port = self.port
@@ -587,9 +690,10 @@ class ColabSession:
         exec_logging = os.popen("apt install wget git python3 python3-venv libgl1 libglib2.0-0 -y")
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install dependency: \n")
             print(exec_logging)
 
-        # install stable diffusion webui
+        # install Stable Diffusion WebUI
         char_cmd = "wget" + " " + "-q" + " " + "-O" + " " + str(path) + "/webui.sh" + " " + "https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh"
         os.system(char_cmd)
         char_cmd = "chmod" + " " + "a+x" + " " + str(path) + "/webui.sh"
@@ -607,9 +711,10 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
+            print("Install Stable Diffusion WebUI: \n")
             print(exec_logging)
 
-        # run stable diffusion webui
+        # run Stable Diffusion WebUI
         char_cmd = str(path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port)
         if (args is None):
             for k,v in kwargs.items():
@@ -621,14 +726,26 @@ class ColabSession:
         char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/stable_diffusion_webui.log 2>&1 &"
         os.system(char_cmd)
         os.system("sleep 30")
-        exec_logging = "stable diffusion webui log file" + ":" + " " + "/tmp/" + str(self.path) + "/stable_diffusion_webui.log."
+        exec_logging = "Stable Diffusion WebUI log file" + ":" + " " + "/tmp/" + str(self.path) + "/stable_diffusion_webui.log."
         print(exec_logging)
 
-    '''
-    other method
-    '''
+    ###################
+    ## other methods ##
+    ###################
+
     # keep Colab session busy
     def busy_session(self,busy = None):
+        """
+        Keep the Colab session active.
+
+        This function helps to keep the Colab session busy to prevent termination.
+
+        Parameters
+        ----------
+        busy : bool, optional
+            Whether to keep the Colab session busy.
+        """
+
         # check param
         if (busy is None):
             busy = self.keep_busy
@@ -641,30 +758,46 @@ class ColabSession:
             ii = ii + 1
             time.sleep(60)
 
-'''
-define other method
-'''
+##########################
+## define other methods ##
+##########################
+
 # update environment
 def update_environment(verbose = True):
+    """
+    Update Ubuntu system environment.
+
+    This function helps to update Ubuntu system environment.
+
+    Parameters
+    ----------
+    verbose : bool, optional
+        Whether to show the running logs.
+    """
+
     exec_logging = os.popen("apt update")
     exec_logging = ''.join(exec_logging.readlines())
     if verbose:
+        print("apt update: \n")
         print(exec_logging)
     exec_logging = os.popen("apt upgrade -y")
     exec_logging = ''.join(exec_logging.readlines())
     if verbose:
+        print("apt upgrade: \n")
         print(exec_logging)
     exec_logging = os.popen("apt autoremove -y")
     exec_logging = ''.join(exec_logging.readlines())
     if verbose:
+        print("apt autoremove: \n")
         print(exec_logging)
-        
-'''
-define Exception class
-'''
+
+############################
+## define Exception Class ##
+############################
+
 # RootUserError
 class RootUserError(Exception):
-    """Exception raised when the user is root."""
+    """Exception raised when the ColabSession user is root."""
 
     def __init__(self,message = 'Cannot proceed under user root!'):
         super().__init__(message)
