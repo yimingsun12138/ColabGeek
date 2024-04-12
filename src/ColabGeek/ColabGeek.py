@@ -79,6 +79,8 @@ class ColabSession:
         Install and run Stable Diffusion WebUI on Colab.
     busy_session(busy = None)
         Keep the Colab session active.
+    Install_Miniconda(path = None,verbose = True)
+        Install Miniconda on Colab.
     """
     
     def __init__(self,user,password,sudo = True,port = 8787,mount_GD = False,keep_busy = True):
@@ -757,6 +759,41 @@ class ColabSession:
             print(i)
             ii = ii + 1
             time.sleep(60)
+
+    # install Miniconda
+    def Install_Miniconda(self,path = None,verbose = True):
+        """
+        Install Miniconda on Colab.
+
+        Miniconda is a free and minimal installer for the conda package manager and frequently used in scientific computing.
+        This function helps to install Miniconda on Colab.
+
+        Parameters
+        ----------
+        path : str, optional
+            The directory to install Miniconda.
+        verbose : bool, optional
+            Whether to show the running logs.
+        """
+
+        # check param
+        if (path is None):
+            path = "/home/" + str(self.user)
+        else:
+            char_cmd = "sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + str(path)
+            os.system(char_cmd)
+
+        # get shell script path
+        script_path = os.path.dirname(__file__)
+        script_path = os.path.join(script_path,'shell_scripts','Install_Miniconda.sh')
+
+        # install Miniconda
+        char_cmd = "sudo -u" + " " + str(self.user) + " " + "bash" + " " + str(script_path) + " " + str(self.user) + " " + str(path)
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print("Install Miniconda: \n")
+            print(exec_logging)
 
 ##########################
 ## define other methods ##
