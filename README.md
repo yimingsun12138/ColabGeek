@@ -103,6 +103,16 @@ main.Run_localtunnel()
 main.Run_ngrok()
 ```
 
+### Cloudflare Tunnel
+
+```python
+# ColabGeek.Run_Cloudflare_Tunnel has the following parameters:
+# - token The token of your tunnels created on Cloudflare.
+# - verbose Show the running logs.
+
+main.Run_Cloudflare_Tunnel(token = 'replace with your own tunnel token!')
+```
+
 For now, all the port forwarding methods built in ColabGeek only accept http protocal. I am still tring to add TCP forwarding methods to ColabGeek. If you have any good ideas and advices, leave an issue.
 
 ### shadowsocks

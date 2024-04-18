@@ -57,6 +57,8 @@ class ColabSession:
         Install and run localtunnel for tunnelling.
     Run_ngrok(token = None,port = None,domain = None,verbose = True)
         Install and run ngrok for tunnelling.
+    Run_Cloudflare_Tunnel(token = None,verbose = True)
+        Install and run cloudflared for tunnelling.
     Run_Rstudio_server(port = None,verbose = True)
         Install and run Rstudio Server on Colab.
     Run_code_server(port = None,password = None,verbose = True)
@@ -285,6 +287,50 @@ class ColabSession:
         ngrok_url = os.popen("cat" + " " + "/tmp/" + str(self.path) + "/ngrok.log" + " " + "|" + " " + "grep 'started tunnel'")
         ngrok_url = ((ngrok_url.readlines())[0]).replace("\n","")
         return(ngrok_url)
+
+    # tunnelling with cloudflared
+    def Run_Cloudflare_Tunnel(self,token = None,verbose = True):
+        """
+        Install and run cloudflared for tunnelling.
+
+        Apart from the Colab notebook, Google Colab prohibits any network connections to the host server.
+        Therefore, a tunnelling method is required to access services installed on Colab.
+        This function helps to install and run cloudflared, which is a server-side daemon for Cloudflare Tunnel.
+
+        Parameters
+        ----------
+        token : str, optional
+            The token of your tunnels created on Cloudflare.
+        verbose : bool, optional
+            Whether to show the running logs.
+        """
+
+        # check param
+        if (token is None):
+            token = input("Input your tunnel token: ")
+
+        # install cloudflared
+        char_cmd = "curl -L --output" + " " + "/tmp/" + str(self.path) + "/cloudflared.deb" + " " + "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
+        char_cmd = char_cmd + " " + "&&" + " " + "dpkg -i" + "/tmp/" + str(self.path) + "/cloudflared.deb"
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print("Install cloudflared: \n")
+            print(exec_logging)
+
+        # exec cmd
+        char_cmd = "cloudflared service install" + " " + str(token)
+        char_cmd = "nohup" + " " + char_cmd + " " + "> /tmp/" + str(self.path) + "/cloudflared.log 2>&1 &"
+
+        # exec
+        os.system(char_cmd)
+        os.system("sleep 30")
+        char_cmd = "cat" + " " + "/tmp/" + str(self.path) + "/cloudflared.log"
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print("Run cloudflared: \n")
+            print(exec_logging)
 
     #####################
     ## web IDE methods ##
