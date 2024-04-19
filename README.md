@@ -113,11 +113,9 @@ main.Run_ngrok()
 main.Run_Cloudflare_Tunnel(token = 'replace with your own tunnel token!')
 ```
 
-For now, all the port forwarding methods built in ColabGeek only accept http protocal. I am still tring to add TCP forwarding methods to ColabGeek. If you have any good ideas and advices, leave an issue.
-
 ### shadowsocks
 
-Although not allowed by Google and not recommended by myself, building a proxy server using Colab sounds pretty 'Geek'. However, due to the lack of TCP forwarding method, ColabGeek can now only install shadowsocks on Colab but have no method to help to connect it. Just use this method on your own Ubuntu servers, that should work.
+Although not allowed by Google and not recommended by myself, building a proxy server using Colab sounds pretty 'Geek'. However, this function only helps to install and run shadowsocks on Colab, and I have no clue how to connect to the shadowsocks server. Just use this method on your own Ubuntu servers, that should work. If you have any good ideas, leave an issue please!
 
 ```python
 # ColabGeek.Run_shadowsocks has the following parameters:

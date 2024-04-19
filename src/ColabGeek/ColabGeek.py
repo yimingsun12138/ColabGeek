@@ -311,7 +311,7 @@ class ColabSession:
 
         # install cloudflared
         char_cmd = "curl -L --output" + " " + "/tmp/" + str(self.path) + "/cloudflared.deb" + " " + "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
-        char_cmd = char_cmd + " " + "&&" + " " + "dpkg -i" + "/tmp/" + str(self.path) + "/cloudflared.deb"
+        char_cmd = char_cmd + " " + "&&" + " " + "dpkg -i" + " " + "/tmp/" + str(self.path) + "/cloudflared.deb"
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
