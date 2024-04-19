@@ -67,6 +67,8 @@ class ColabSession:
         Install code server extensions.
     Config_code_server(property,value)
         Configure code server.
+    Run_JupyterLab(port = None,password = None,verbose = True)
+        Install and run JupyterLab on Colab.
     Run_shadowsocks(port = None,password = None,encrypt = 'aes-256-gcm',verbose = True)
         Install and run shadowsocks on Colab.
     Install_Homebrew(verbose = True)
@@ -83,6 +85,8 @@ class ColabSession:
         Keep the Colab session active.
     Install_Miniconda(path = None,verbose = True)
         Install Miniconda on Colab.
+    Install_udocker(verbose = True)
+        Install udocker on Colab.
     """
     
     def __init__(self,user,password,sudo = True,port = 8787,mount_GD = False,keep_busy = True):
@@ -478,6 +482,71 @@ class ColabSession:
         with open(file_path,"w") as json_file:
             json.dump(json_setting,json_file,indent=4)
 
+    # run JupyterLab
+    def Run_JupyterLab(self,port = None,password = None,mount_Colab = True,verbose = True):
+        """
+        Install and run JupyterLab on Colab.
+
+        JupyterLab is a web IDE for working with Jupyter Notebooks, providing a powerful environment for interactive computing.
+        This function helps to install and run mrdoge/jupyterlab container from Docker Hub using udocker.
+
+        Parameters
+        ----------
+        port : int, optional
+            Listening port for JupyterLab.
+        password : str, optional
+            The JupyterLab login password.
+        mount_Colab : bool, optional
+            Whether map the Colab /content directory to the JupyterLab container /content directory.
+        verbose : bool, optional
+            Whether to show the running logs.
+
+        Raises
+        ------
+        ImportError
+            If the jupyter_server.auth module is not installed.
+        """
+
+        # import dependency
+        try:
+            import jupyter_server.auth
+        except ImportError:
+            print("jupyter_server.auth does not exist, try execute `pip install jupyter_server`.")
+            return(None)
+
+        # check param
+        if (port is None):
+            port = self.port
+        if (password is None):
+            password = self.password
+        password = jupyter_server.auth.passwd(str(password))
+
+        # install udocker
+        self.Install_udocker(verbose = verbose)
+
+        # pull JupyterLab
+        char_cmd = "sudo -u" + " " + str(self.user) + " " + "udocker --allow-root pull mrdoge/jupyterlab"
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print("Pull mrdoge/jupyterlab: \n")
+            print(exec_logging)
+
+        # run JupyterLab
+        char_cmd = "sudo -u" + " " + str(self.user) + " " + "udocker --allow-root run -p" + " " + str(port) + ":" + "8888"
+        if mount_Colab:
+            char_cmd = char_cmd + " " + "-v /content:/content"
+        char_cmd = char_cmd + " " + "mrdoge/jupyterlab" + " " + "jupyter lab --ip=0.0.0.0 --port=8888 --no-browser" + " " + "--ServerApp.password" + "=" + "'" + str(password) + "'"
+        char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/JupyterLab.log 2>&1 &"
+        os.system(char_cmd)
+        os.system("sleep 120")
+        char_cmd = "cat" + " " + "/tmp/" + str(self.path) + "/JupyterLab.log"
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print("JupyterLab log: \n")
+            print(exec_logging)
+
     ###################
     ## proxy methods ##
     ###################
@@ -839,6 +908,28 @@ class ColabSession:
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
             print("Install Miniconda: \n")
+            print(exec_logging)
+
+    # install udocker
+    def Install_udocker(self,verbose = True):
+        """
+        Install udocker on Colab.
+
+        udocker is a basic user tool to execute simple docker containers in user space without requiring root privileges.
+        udocker can also run inside a docker container, making it a perfect tool for executing containers on Colab.
+
+        Parameters
+        ----------
+        verbose : bool, optional
+            Whether to show the running logs.
+        """
+
+        # install udocker
+        char_cmd = "pip install udocker" + " " + "&&" + " " + "sudo -u" + " " + str(self.user) + " " + "udocker install"
+        exec_logging = os.popen(char_cmd)
+        exec_logging = ''.join(exec_logging.readlines())
+        if verbose:
+            print("Install udocker: \n")
             print(exec_logging)
 
 ##########################
