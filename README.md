@@ -77,6 +77,19 @@ main.Config_code_server(property='files.autoSave',value='off')
 main.Run_Rstudio_server()
 ```
 
+### Run JupyterLab
+[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/index.html) is an interactive web IDE for working with Jupyter notebooks, code, and data. It is a flexible and extensible platform designed to support the entire workflow in data science, scientific computing, and machine learning projects. ColabGeek pulls the [mrdoge/jupyterlab docker image](https://hub.docker.com/r/mrdoge/jupyterlab) from Docker Hub and execute the docker container using [udocker](https://github.com/indigo-dc/udocker). Notice that it is not recommended to run udocker and JupyterLab under user root.
+
+```python
+# ColabGeek.Run_JupyterLab has the following parameters:
+# - port The port you want to run JupyterLab on, set to None to use the default port.
+# - password The JupyterLab login password, set to None and use the linux user password by default.
+# - mount_Colab Whether map the Colab /content directory to the JupyterLab container /content directory.
+# - verbose Show the running logs.
+
+main.Run_JupyterLab()
+```
+
 Google Colab does not allow any internet connections to their servers except the official web interface. So, port forwarding methods are required to proxy the web IDE installed.
 
 ### localtunnel
