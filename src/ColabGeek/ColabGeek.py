@@ -67,7 +67,7 @@ class ColabSession:
         Install code server extensions.
     Config_code_server(property,value)
         Configure code server.
-    Run_JupyterLab(port = None,password = None,verbose = True)
+    Run_JupyterLab(port = None,password = None,mount_Colab = True,verbose = True)
         Install and run JupyterLab on Colab.
     Run_shadowsocks(port = None,password = None,encrypt = 'aes-256-gcm',verbose = True)
         Install and run shadowsocks on Colab.
@@ -515,6 +515,8 @@ class ColabSession:
             return(None)
 
         # check param
+        if (str(self.user) == 'root'):
+            warnings.warn(message = "Running udocker and JupyterLab as root may lead to unexpected issues!",category = UserWarning)
         if (port is None):
             port = self.port
         if (password is None):
@@ -536,7 +538,7 @@ class ColabSession:
         char_cmd = "sudo -u" + " " + str(self.user) + " " + "udocker --allow-root run -p" + " " + str(port) + ":" + "8888"
         if mount_Colab:
             char_cmd = char_cmd + " " + "-v /content:/content"
-        char_cmd = char_cmd + " " + "mrdoge/jupyterlab" + " " + "jupyter lab --ip=0.0.0.0 --port=8888 --no-browser" + " " + "--ServerApp.password" + "=" + "'" + str(password) + "'"
+        char_cmd = char_cmd + " " + "mrdoge/jupyterlab" + " " + "jupyter lab --allow-root --ip=0.0.0.0 --port=8888 --no-browser" + " " + "--ServerApp.password" + "=" + "'" + str(password) + "'"
         char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/JupyterLab.log 2>&1 &"
         os.system(char_cmd)
         os.system("sleep 120")
@@ -925,7 +927,7 @@ class ColabSession:
         """
 
         # install udocker
-        char_cmd = "pip install udocker" + " " + "&&" + " " + "sudo -u" + " " + str(self.user) + " " + "udocker install"
+        char_cmd = "pip install udocker" + " " + "&&" + " " + "sudo -u" + " " + str(self.user) + " " + "udocker --allow-root install"
         exec_logging = os.popen(char_cmd)
         exec_logging = ''.join(exec_logging.readlines())
         if verbose:
