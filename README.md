@@ -21,13 +21,15 @@ import ColabGeek
 ColabGeek.update_environment()
 ```
 
-Initiate the Colab session by add linux users and mount Google Drive.
+Initiate the Colab session by adding linux users and mounting Google Drive.
 
 ```python
 main = ColabGeek.ColabSession(user='Knight',password='midnight',mount_GD=True)
 ```
 
-As a cloud computing platform based on Jupyter notebooks, Google Colab does not provide a top-notch comfortable environment for R language data analysis and other non-Python programming. Therefore, this project provides a method for quickly installing other web IDE on Google Colab, enabling it to expand its range of capabilities.
+## Web IDE methods
+
+As a cloud computing platform based on Jupyter notebooks, Google Colab does not provide a top-notch comfortable environment for R language data analysis and other non-Python programming. Therefore, this project provides methods for quickly installing other web IDEs on Google Colab, enabling it to expand its range of capabilities.
 
 ### Run code server
 
@@ -71,7 +73,7 @@ main.Config_code_server(property='files.autoSave',value='off')
 
 ```python
 # ColabGeek.Run_Rstudio_server has the following parameters:
-# - port The port you want to run Rstudio on, set to None to use the default port.
+# - port The port you want to run Rstudio server on, set to None to use the default port.
 # - verbose Show the running logs.
 
 main.Run_Rstudio_server()
@@ -89,6 +91,8 @@ main.Run_Rstudio_server()
 
 main.Run_JupyterLab()
 ```
+
+## Port forwarding methods
 
 Google Colab does not allow any internet connections to their servers except the official web interface. So, port forwarding methods are required to proxy the web IDE installed.
 
@@ -123,8 +127,10 @@ main.Run_ngrok()
 # - token The token of your tunnels created on Cloudflare.
 # - verbose Show the running logs.
 
-main.Run_Cloudflare_Tunnel(token = 'replace with your own tunnel token!')
+main.Run_Cloudflare_Tunnel(token='replace with your own tunnel token!')
 ```
+
+## Other methods
 
 ### shadowsocks
 
