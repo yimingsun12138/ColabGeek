@@ -5,6 +5,14 @@
 
 ColabGeek Python package is designed to help run useful tools on Google Colab, including web IDE, port forwarding and so on. It is worth noting that this package is also compatible with other Ubuntu operating system based servers, so try this package on other platforms as well.
 
+## Version info
+
+Version: 1.3.8
+
+Platform: Ubuntu 22.04 LTS
+
+Update: 2024/10/24
+
 ## Installation
 
 ```python
@@ -13,7 +21,7 @@ pip install ColabGeek
 
 ## Get started
 
-First load the ColabGeek module and update all the packages and dependencies in the system.
+First load the ColabGeek module and update all the packages and dependencies in the system (Please run under user root!).
 
 ```python
 import ColabGeek
@@ -21,7 +29,7 @@ import ColabGeek
 ColabGeek.update_environment()
 ```
 
-Initiate the Colab session by adding linux users and mounting Google Drive.
+Initiate the Colab session by adding a new user (or change the password for the existing user) and mounting Google Drive.
 
 ```python
 main = ColabGeek.ColabSession(user='Knight',password='midnight',mount_GD=True)

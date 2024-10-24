@@ -975,5 +975,5 @@ def update_environment(verbose = True):
 class RootUserError(Exception):
     """Exception raised when the ColabSession user is root."""
 
-    def __init__(self,message = 'Cannot proceed under user root!'):
+    def __init__(self,message = 'Cannot proceed under ColabSession user root!'):
         super().__init__(message)

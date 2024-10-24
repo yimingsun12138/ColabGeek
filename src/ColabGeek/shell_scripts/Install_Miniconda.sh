@@ -12,6 +12,5 @@ bash $installation_path/miniconda3/miniconda.sh -b -u -p $installation_path/mini
 rm -rf $installation_path/miniconda3/miniconda.sh
 
 # initialize Miniconda
-$installation_path/miniconda3/bin/conda init bash
-$installation_path/miniconda3/bin/conda init zsh
+$installation_path/miniconda3/bin/conda init --all
 echo "conda deactivate" >> /home/$user_name/.bashrc
