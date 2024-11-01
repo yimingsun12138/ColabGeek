@@ -1,12 +1,13 @@
 """
 ColabGeek helps to run useful tools on Google Colab.
-Dependencies include os, sys, time, json and warnings.
+Dependencies include os, sys, time, json, warnings, google.colab and jupyter_server.auth.
 
 Classes:
  - ColabSession: Class corresponding to the current Colab session.
 
 Exceptions:
  - RootUserError: Raise exception when the ColabSession user is root.
+ - SudoPermissionError: Raise exception when the ColabSession user lacks sudo permission.
 
 Methods:
  - update_environment: Update Ubuntu system environment.
@@ -395,11 +396,15 @@ class ColabSession:
         ------
         RootUserError
             If the ColabSession user is root.
+        SudoPermissionError
+            If the ColabSession user lacks sudo permission.
         """
 
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
+        if (self.sudo == False):
+            raise SudoPermissionError()
         if (port is None):
             port = self.port
         if (password is None):
@@ -610,17 +615,28 @@ class ColabSession:
         ------
         RootUserError
             If the ColabSession user is root.
+        SudoPermissionError
+            If the ColabSession user lacks sudo permission.
         """
 
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
+        if (self.sudo == False):
+            raise SudoPermissionError()
 
         # install expect
         exec_logging = os.popen("apt install expect -y")
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
+            print(exec_logging)
+
+        # install Homebrew dependencies
+        exec_logging = os.popen("apt install build-essential -y")
+        exec_logging = "".join(exec_logging.readlines())
+        if verbose:
+            print("Install Homebrew dependencies: \n")
             print(exec_logging)
 
         # get shell script path
@@ -652,11 +668,15 @@ class ColabSession:
         ------
         RootUserError
             If the ColabSession user is root.
+        SudoPermissionError
+            If the ColabSession user lacks sudo permission.
         """
 
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
+        if (self.sudo == False):
+            raise SudoPermissionError()
 
         # install expect
         exec_logging = os.popen("apt install expect -y")
@@ -695,11 +715,15 @@ class ColabSession:
         ------
         RootUserError
             If the ColabSession user is root.
+        SudoPermissionError
+            If the ColabSession user lacks sudo permission.
         """
 
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
+        if (self.sudo == False):
+            raise SudoPermissionError()
         if (version is None):
             version = input("Input the Ruby version to install: ")
 
@@ -741,12 +765,16 @@ class ColabSession:
         ------
         RootUserError
             If the ColabSession user is root.
+        SudoPermissionError
+            If the ColabSession user lacks sudo permission.
         """
 
         # check param
         if (str(self.user) == 'root'):
             raise RootUserError()
-            
+        if (self.sudo == False):
+            raise SudoPermissionError()
+
         # install dependency
         self.Install_Homebrew(verbose = verbose)
         self.Install_rbenv(verbose = verbose)
@@ -967,13 +995,20 @@ def update_environment(verbose = True):
         print("apt autoremove: \n")
         print(exec_logging)
 
-############################
-## define Exception Class ##
-############################
+##############################
+## define Exception Classes ##
+##############################
 
 # RootUserError
 class RootUserError(Exception):
     """Exception raised when the ColabSession user is root."""
 
-    def __init__(self,message = 'Cannot proceed under ColabSession user root!'):
+    def __init__(self,message = "Cannot proceed under ColabSession user root!"):
+        super().__init__(message)
+
+# SudoPermissionError
+class SudoPermissionError(Exception):
+    """Exception raised when the ColabSession user lacks sudo permission."""
+
+    def __init__(self,message = "Operation requires sudo privilege from the ColabSession user!"):
         super().__init__(message)

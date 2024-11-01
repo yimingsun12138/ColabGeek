@@ -15,9 +15,6 @@ send "brew install rbenv ruby-build\r"
 expect "\\\$"
 send "rbenv init\r"
 expect "\\\$"
-send {echo "eval \"\$(rbenv init - bash)\"" >> ~/.bashrc}
-send "\r"
-expect "\\\$"
 
 send "exit\r"
 expect "*"

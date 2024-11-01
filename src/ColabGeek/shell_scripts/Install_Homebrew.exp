@@ -20,14 +20,11 @@ send "\r"
 expect "\\\$"
 
 # add Homebrew to PATH
-send {test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"}
-send "\r"
+set temp_var {""}
+send "echo $temp_var >> /home/$user_name/.bashrc\r"
 expect "\\\$"
-send {test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"}
-send "\r"
-expect "\\\$"
-send {echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bashrc}
-send "\r"
+set temp_var {'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'}
+send "echo $temp_var >> /home/$user_name/.bashrc\r"
 expect "\\\$"
 
 send "exit\r"

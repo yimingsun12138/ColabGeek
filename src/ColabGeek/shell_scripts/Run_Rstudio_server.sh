@@ -5,8 +5,8 @@ cd /tmp/$1
 
 # install
 apt install gdebi-core -y
-wget https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.09.0-375-amd64.deb
-gdebi -n rstudio-server-2024.09.0-375-amd64.deb
+wget https://s3.ap-east-1.amazonaws.com/mrdoge-s3-bucket/share/resource_for_download/rstudio_server_for_Google_Colab.deb -O /tmp/$1/rstudio_server.deb
+gdebi -n /tmp/$1/rstudio_server.deb
 
 # config Rstudio server port
 temp_var="www-port=$2"

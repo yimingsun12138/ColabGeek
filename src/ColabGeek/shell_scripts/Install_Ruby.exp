@@ -12,11 +12,15 @@ send "cd /tmp/$tmp_path\r"
 expect "\\\$"
 
 # install Ruby
-send "rbenv install $Ruby_version\r"
+set temp_var {"--with-openssl-dir=$(brew --prefix openssl)"}
+send "RUBY_CONFIGURE_OPTS=$temp_var rbenv install $Ruby_version\r"
 expect "\\\$"
 
 # add Ruby to PATH
-set temp_var "rbenv global $Ruby_version"
+set temp_var {""}
+send "echo $temp_var >> /home/$user_name/.bashrc\r"
+expect "\\\$"
+set temp_var "\"rbenv global $Ruby_version\""
 send "echo $temp_var >> /home/$user_name/.bashrc\r"
 expect "\\\$"
 

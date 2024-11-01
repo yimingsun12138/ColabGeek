@@ -21,7 +21,7 @@ pip install ColabGeek
 
 ## Get started
 
-First load the ColabGeek module and update all the packages and dependencies in the system (Please run under user root!).
+First load the ColabGeek module and update all the packages and dependencies in the system (Please run under user root).
 
 ```python
 import ColabGeek
@@ -29,7 +29,7 @@ import ColabGeek
 ColabGeek.update_environment()
 ```
 
-Initiate the Colab session by adding a new user (or change the password for the existing user) and mounting Google Drive.
+Initiate the Colab session by adding a new user (or changing the password for the existing user) and mounting Google Drive.
 
 ```python
 main = ColabGeek.ColabSession(user='Knight',password='midnight',mount_GD=True)
@@ -37,7 +37,7 @@ main = ColabGeek.ColabSession(user='Knight',password='midnight',mount_GD=True)
 
 ## Web IDE methods
 
-As a cloud computing platform based on Jupyter notebooks, Google Colab does not provide a top-notch comfortable environment for R language data analysis and other non-Python programming. Therefore, this project provides methods for quickly installing other web IDEs on Google Colab, enabling it to expand its range of capabilities.
+As a cloud computing platform based on Jupyter notebook, Google Colab does not provide a top-notch comfortable environment for R language data mining and other non-Python programming. Therefore, this project provides methods for quickly installing other web IDEs on Google Colab, enabling it to expand its range of capabilities.
 
 ### Run code server
 
