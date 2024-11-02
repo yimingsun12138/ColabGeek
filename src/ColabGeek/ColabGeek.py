@@ -49,7 +49,7 @@ class ColabSession:
     Methods
     -------
     add_user()
-        Add or modify a user to the system.
+        Add or modify a user in the system.
     Google_Drive()
         Mount Google Drive if mount_GD is set to True.
     tmp_path()
@@ -61,7 +61,7 @@ class ColabSession:
     Run_Cloudflare_Tunnel(token = None,verbose = True)
         Install and run cloudflared for tunnelling.
     Run_Rstudio_server(port = None,verbose = True)
-        Install and run Rstudio Server on Colab.
+        Install and run Rstudio server on Colab.
     Run_code_server(port = None,password = None,verbose = True)
         Install and run code server on Colab.
     Install_code_server_extension(extension,verbose = True)
@@ -70,7 +70,7 @@ class ColabSession:
         Configure code server.
     Run_JupyterLab(port = None,password = None,mount_Colab = True,verbose = True)
         Install and run JupyterLab on Colab.
-    Run_shadowsocks(port = None,password = None,encrypt = 'aes-256-gcm',verbose = True)
+    Run_shadowsocks(port = None,password = None,encrypt = "aes-256-gcm",verbose = True)
         Install and run shadowsocks on Colab.
     Install_Homebrew(verbose = True)
         Install Homebrew on Colab.
@@ -80,7 +80,7 @@ class ColabSession:
         Install Ruby on Colab.
     Install_Jekyll(Ruby_version = None,verbose = True)
         Install and run Jekyll on Colab.
-    Run_stable_diffusion_webui(path = None,port = None,verbose = True,args = None,**kwargs)
+    Run_Stable_Diffusion_WebUI(path = None,port = None,verbose = True,args = None,**kwargs)
         Install and run Stable Diffusion WebUI on Colab.
     busy_session(busy = None)
         Keep the Colab session active.
@@ -89,12 +89,12 @@ class ColabSession:
     Install_udocker(verbose = True)
         Install udocker on Colab.
     """
-    
+
     def __init__(self,user,password,sudo = True,port = 8787,mount_GD = False,keep_busy = True):
         """
         Initialize the ColabSession object.
 
-        Initialize the ColabSession object by adding the system user, mounting Google Drive and setting temp directory.
+        Initialize the ColabSession object by adding a new user, mounting Google Drive and setting tmp directory.
 
         Parameters
         ----------
@@ -125,7 +125,7 @@ class ColabSession:
 
         # mount Google Drive
         self.Google_Drive()
-        
+
         # create tmp path
         self.tmp_path()
 
@@ -133,10 +133,10 @@ class ColabSession:
     ## init methods ##
     ##################
 
-    # add user method
+    # add user
     def add_user(self):
         """
-        Add or modify a user to the system.
+        Add or modify a user in the system.
         """
 
         # check user list
@@ -144,33 +144,42 @@ class ColabSession:
         for i in range(0,len(user_list)):
             user_list[i] = user_list[i].replace("\n","")
         if (str(self.user) not in user_list):
-            os.system("useradd -m -s /bin/bash" + " " + str(self.user))
+            os.system(f"useradd -m -s /bin/bash {str(self.user)}")
 
-        # change user passwd
-        os.system("echo '" + str(self.user) + ":" + str(self.password) + "' | chpasswd")
+        # change user password
+        os.system(f"echo '{str(self.user)}:{str(self.password)}' | chpasswd")
 
         # add sudo permission
         if self.sudo:
-            os.system("usermod -G sudo" + " " + str(self.user))
+            os.system(f"usermod -G sudo {str(self.user)}")
 
-    # mount Google Drive method
+    # mount Google Drive
     def Google_Drive(self):
         """
         Mount Google Drive if mount_GD is set to True.
+
+        Raises
+        ------
+        ImportError
+            If the google.colab module is not installed.
         """
 
         if self.mount_GD:
-            from google.colab import drive
+            try:
+                from google.colab import drive
+            except ImportError as e:
+                error_message = f"{e}.\n\nPlease set the `mount_GD` parameter to False and try manually mounting Google Drive. Contact the author if the problem persists."
+                raise ImportError(error_message) from e
             drive.mount('/content/drive')
 
-    # create tmp path method
+    # create tmp path
     def tmp_path(self):
         """
         Create a temporary directory in /tmp.
         """
 
         self.path = ((os.popen("date +%Y%m%d_%H%M%S").readlines())[0]).replace("\n","")
-        os.system("sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + "/tmp/" + str(self.path))
+        os.system(f"sudo -u {str(self.user)} mkdir -p /tmp/{str(self.path)}")
 
     ########################
     ## tunnelling methods ##
@@ -190,9 +199,9 @@ class ColabSession:
         port : int, optional
             Listening port for localtunnel.
         host : str, optional
-            Upstream server providing forwarding.
+            Upstream host server providing forwarding.
         subdomain : str, optional
-            Request this subdomain. Do not include the '_' in the subdomain.
+            Request this subdomain. Do not include the "_" in the subdomain.
         verbose : bool, optional
             Whether to show the running logs.
 
@@ -209,28 +218,28 @@ class ColabSession:
         # install localtunnel
         if(len(os.popen("which npm").readlines()) == 0):
             exec_logging = os.popen("apt install nodejs npm -y")
-            exec_logging = ''.join(exec_logging.readlines())
+            exec_logging = "".join(exec_logging.readlines())
             if verbose:
                 print("Install nodejs and npm: \n")
                 print(exec_logging)
         exec_logging = os.popen("npm install -g localtunnel")
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install localtunnel: \n")
             print(exec_logging)
 
         # exec cmd
-        char_cmd = "lt --port" + " " + str(port) + " " + "--host" + " " + str(host)
+        char_cmd = f"lt --port {str(port)} --host {str(host)}"
         if not(subdomain is None):
-            char_cmd = char_cmd + " " + "--subdomain" + " " + str(subdomain)
-        char_cmd = "nohup" + " " + char_cmd + " " + "> /tmp/" + str(self.path) + "/localtunnel.log 2>&1 &"
+            char_cmd = f"{char_cmd} --subdomain {str(subdomain)}"
+        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/localtunnel.log 2>&1 &"
 
         # exec
         os.system(char_cmd)
         os.system("sleep 10")
 
         # return
-        lt_url = os.popen("cat" + " " + "/tmp/" + str(self.path) + "/localtunnel.log" + " " + "|" + " " + "grep 'your url is:'")
+        lt_url = os.popen(f"cat /tmp/{str(self.path)}/localtunnel.log | grep 'your url is:'")
         lt_url = ((lt_url.readlines())[0]).replace("\n","")
         return(lt_url)
 
@@ -269,27 +278,27 @@ class ColabSession:
         # install ngrok
         char_cmd = 'curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc > /dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok'
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install ngrok: \n")
             print(exec_logging)
 
-        # auth
-        char_cmd = "ngrok config add-authtoken" + " " + str(token)
+        # auth ngrok
+        char_cmd = f"ngrok config add-authtoken {str(token)}"
         os.system(char_cmd)
 
         # exec cmd
-        char_cmd = "ngrok http" + " " + str(port)
+        char_cmd = f"ngrok http {str(port)}"
         if not(domain is None):
-            char_cmd = char_cmd + " " + "--domain" + " " + str(domain)
-        char_cmd = char_cmd + " " + "--log stdout > /tmp/" + str(self.path) + "/ngrok.log &"
+            char_cmd = f"{char_cmd} --domain {str(domain)}"
+        char_cmd = f"{char_cmd} --log stdout > /tmp/{str(self.path)}/ngrok.log &"
 
         # exec
         os.system(char_cmd)
         os.system("sleep 10")
 
         # return
-        ngrok_url = os.popen("cat" + " " + "/tmp/" + str(self.path) + "/ngrok.log" + " " + "|" + " " + "grep 'started tunnel'")
+        ngrok_url = os.popen(f"cat /tmp/{str(self.path)}/ngrok.log | grep 'started tunnel'")
         ngrok_url = ((ngrok_url.readlines())[0]).replace("\n","")
         return(ngrok_url)
 
@@ -305,7 +314,7 @@ class ColabSession:
         Parameters
         ----------
         token : str, optional
-            The token of your tunnels created on Cloudflare.
+            The token of your tunnel created on Cloudflare.
         verbose : bool, optional
             Whether to show the running logs.
         """
@@ -315,24 +324,24 @@ class ColabSession:
             token = input("Input your tunnel token: ")
 
         # install cloudflared
-        char_cmd = "curl -L --output" + " " + "/tmp/" + str(self.path) + "/cloudflared.deb" + " " + "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
-        char_cmd = char_cmd + " " + "&&" + " " + "dpkg -i" + " " + "/tmp/" + str(self.path) + "/cloudflared.deb"
+        char_cmd = f"curl -L --output /tmp/{str(self.path)}/cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
+        char_cmd = f"{char_cmd} && dpkg -i /tmp/{str(self.path)}/cloudflared.deb"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install cloudflared: \n")
             print(exec_logging)
 
         # exec cmd
-        char_cmd = "cloudflared service install" + " " + str(token)
-        char_cmd = "nohup" + " " + char_cmd + " " + "> /tmp/" + str(self.path) + "/cloudflared.log 2>&1 &"
+        char_cmd = f"cloudflared service install {str(token)}"
+        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/cloudflared.log 2>&1 &"
 
         # exec
         os.system(char_cmd)
         os.system("sleep 30")
-        char_cmd = "cat" + " " + "/tmp/" + str(self.path) + "/cloudflared.log"
+        char_cmd = f"cat /tmp/{str(self.path)}/cloudflared.log"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Run cloudflared: \n")
             print(exec_logging)
@@ -344,16 +353,16 @@ class ColabSession:
     # run Rstudio server
     def Run_Rstudio_server(self,port = None,verbose = True):
         """
-        Install and run Rstudio Server on Colab.
+        Install and run Rstudio server on Colab.
 
         The Colab notebook is an excellent integrated development environment for Python.
-        Although it can also run the R kernel, using the Rstudio Server for data analysis provides a more comfortable experience.
-        This function helps to install and run Rstudio Server on Colab.
+        Although it can also run the R kernel, using the Rstudio server for data analysis provides a more user-friendly experience.
+        This function helps to install and run Rstudio server on Colab.
 
         Parameters
         ----------
         port : int, optional
-            Listening port for Rstudio Server.
+            Listening port for Rstudio server.
         verbose : bool, optional
             Whether to show the running logs.
         """
@@ -364,14 +373,14 @@ class ColabSession:
 
         # get shell script path
         script_path = os.path.dirname(__file__)
-        script_path = os.path.join(script_path,'shell_scripts','Run_Rstudio_server.sh')
+        script_path = os.path.join(script_path,"shell_scripts","Run_Rstudio_server.sh")
 
         # run Rstudio server
-        char_cmd = "bash" + " " + str(script_path) + " " + str(self.path) + " " + str(port)
+        char_cmd = f"bash {str(script_path)} {str(self.path)} {str(port)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
-            print("Install Rstudio Server: \n")
+            print("Install Rstudio server: \n")
             print(exec_logging)
 
     # run code server
@@ -401,7 +410,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == 'root'):
+        if (str(self.user) == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -412,24 +421,24 @@ class ColabSession:
 
         # install expect
         exec_logging = os.popen("apt install expect -y")
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
             print(exec_logging)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
-        script_path = os.path.join(script_path,'shell_scripts','Run_code_server.exp')
+        script_path = os.path.join(script_path,"shell_scripts","Run_code_server.exp")
 
         # run code server
-        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(port) + " " + str(password) + " " + str(self.path)
+        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {str(port)} {str(password)} {str(self.path)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install code server: \n")
             print(exec_logging)
 
-    # install code server plugins
+    # install code server extensions
     def Install_code_server_extension(self,extension,verbose = True):
         """
         Install code server extensions.
@@ -445,11 +454,11 @@ class ColabSession:
             Whether to show the running logs.
         """
 
-        char_cmd = "sudo -u" + " " + str(self.user) + " " + "code-server --install-extension" + " " + str(extension)
+        char_cmd = f"sudo -u {str(self.user)} code-server --install-extension {str(extension)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
-            print("Install" + " " + str(extension) + ": \n")
+            print(f"Install {str(extension)}: \n")
             print(exec_logging)
 
     # configure code server
@@ -463,37 +472,37 @@ class ColabSession:
         ----------
         property : str
             Specify the property to be added or updated in the `settings.json` file.
-        value : str
-            Specify the value for the corresponding property.
+        value : any
+            Specify the value for the corresponding property, can be of any type that is supported by JSON.
         """
 
         # check whether settings.json exists
-        file_path = "/home/" + str(self.user) + "/.local/share/code-server/User"
-        char_cmd = "sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + file_path
+        file_path = f"/home/{str(self.user)}/.local/share/code-server/User"
+        char_cmd = f"sudo -u {str(self.user)} mkdir -p {file_path}"
         os.system(char_cmd)
-        file_path = file_path + "/settings.json"
+        file_path = f"{file_path}/settings.json"
         if os.path.exists(file_path):
             with open(file_path,"r") as json_file:
                 json_setting = json.load(json_file)
         else:
-            char_cmd = "sudo -u" + " " + str(self.user) + " " + "touch" + " " + file_path
+            char_cmd = f"sudo -u {str(self.user)} touch {file_path}"
             os.system(char_cmd)
             json_setting = {}
 
         # add property
         json_setting[str(property)] = value
 
-        # dump settings
+        # dump json setting
         with open(file_path,"w") as json_file:
-            json.dump(json_setting,json_file,indent=4)
+            json.dump(json_setting,json_file,indent = 4)
 
     # run JupyterLab
     def Run_JupyterLab(self,port = None,password = None,mount_Colab = True,verbose = True):
         """
         Install and run JupyterLab on Colab.
 
-        JupyterLab is a web IDE for working with Jupyter Notebooks, providing a powerful environment for interactive computing.
-        This function helps to install and run mrdoge/jupyterlab container from Docker Hub using udocker.
+        JupyterLab is an online integrated development environment for interactive computing.
+        This function helps to pull and run mrdoge/jupyterlab image from Docker Hub using udocker.
 
         Parameters
         ----------
@@ -502,7 +511,7 @@ class ColabSession:
         password : str, optional
             The JupyterLab login password.
         mount_Colab : bool, optional
-            Whether map the Colab /content directory to the JupyterLab container /content directory.
+            Whether to map the Colab /content directory to the JupyterLab container /content directory.
         verbose : bool, optional
             Whether to show the running logs.
 
@@ -515,13 +524,13 @@ class ColabSession:
         # import dependency
         try:
             import jupyter_server.auth
-        except ImportError:
-            print("jupyter_server.auth does not exist, try execute `pip install jupyter_server`.")
-            return(None)
+        except ImportError as e:
+            error_message = f"{e}.\n\nPlease try executing `pip install jupyter_server` to fix the error. Contact the author if the problem persists."
+            raise ImportError(error_message) from e
 
         # check param
-        if (str(self.user) == 'root'):
-            warnings.warn(message = "Running udocker and JupyterLab as root may lead to unexpected issues!",category = UserWarning)
+        if (str(self.user) == "root"):
+            warnings.warn(message = "Running udocker and JupyterLab under ColabSession user root may lead to unexpected issues!",category = UserWarning)
         if (port is None):
             port = self.port
         if (password is None):
@@ -532,24 +541,24 @@ class ColabSession:
         self.Install_udocker(verbose = verbose)
 
         # pull JupyterLab
-        char_cmd = "sudo -u" + " " + str(self.user) + " " + "udocker --allow-root pull mrdoge/jupyterlab"
+        char_cmd = f"sudo -u {str(self.user)} udocker --allow-root pull mrdoge/jupyterlab"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Pull mrdoge/jupyterlab: \n")
             print(exec_logging)
 
         # run JupyterLab
-        char_cmd = "sudo -u" + " " + str(self.user) + " " + "udocker --allow-root run -p" + " " + str(port) + ":" + "8888"
+        char_cmd = f"sudo -u {str(self.user)} udocker --allow-root run -p {str(port)}:8888"
         if mount_Colab:
-            char_cmd = char_cmd + " " + "-v /content:/content"
-        char_cmd = char_cmd + " " + "mrdoge/jupyterlab" + " " + "jupyter lab --allow-root --ip=0.0.0.0 --port=8888 --no-browser" + " " + "--ServerApp.password" + "=" + "'" + str(password) + "'"
-        char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/JupyterLab.log 2>&1 &"
+            char_cmd = f"{char_cmd} -v /content:/content"
+        char_cmd = f"{char_cmd} mrdoge/jupyterlab jupyter lab --allow-root --ip=0.0.0.0 --port=8888 --no-browser --ServerApp.password='{str(password)}'"
+        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/JupyterLab.log 2>&1 &"
         os.system(char_cmd)
         os.system("sleep 120")
-        char_cmd = "cat" + " " + "/tmp/" + str(self.path) + "/JupyterLab.log"
+        char_cmd = f"cat /tmp/{str(self.path)}/JupyterLab.log"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("JupyterLab log: \n")
             print(exec_logging)
@@ -559,11 +568,11 @@ class ColabSession:
     ###################
 
     # run shadowsocks
-    def Run_shadowsocks(self,port = None,password = None,encrypt = 'aes-256-gcm',verbose = True):
+    def Run_shadowsocks(self,port = None,password = None,encrypt = "aes-256-gcm",verbose = True):
         """
         Install and run shadowsocks on Colab.
 
-        This function is used to set up the shadowsocks server, which is a secure socks5 proxy.
+        This function helps to set up the shadowsocks server, which operates as a secure socks5 proxy.
 
         Parameters
         ----------
@@ -585,15 +594,22 @@ class ColabSession:
 
         # install shadowsocks
         exec_logging = os.popen("apt install shadowsocks-libev -y")
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install shadowsocks-libev: \n")
             print(exec_logging)
 
         # run shadowsocks
-        char_cmd = "ss-server" + " " + "-s 0.0.0.0" + " " + "-p" + " " + str(port) + " " + "-k" + " " + str(password) + " " + "-m" + " " + str(encrypt)
-        char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/shadowsocks.log 2>&1 &"
+        char_cmd = f"ss-server -s 0.0.0.0 -p {str(port)} -k {str(password)} -m {str(encrypt)}"
+        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/shadowsocks.log 2>&1 &"
         os.system(char_cmd)
+        os.system("sleep 10")
+        char_cmd = f"cat /tmp/{str(self.path)}/shadowsocks.log"
+        exec_logging = os.popen(char_cmd)
+        exec_logging = "".join(exec_logging.readlines())
+        if verbose:
+            print("Run shadowsocks-libev: \n")
+            print(exec_logging)
 
     ####################
     ## Jekyll methods ##
@@ -620,7 +636,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == 'root'):
+        if (str(self.user) == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -641,14 +657,14 @@ class ColabSession:
 
         # get shell script path
         script_path = os.path.dirname(__file__)
-        script_path = os.path.join(script_path,'shell_scripts','Install_Homebrew.exp')
+        script_path = os.path.join(script_path,"shell_scripts","Install_Homebrew.exp")
 
         # run expect script
-        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
+        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {str(self.path)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
-            print('Install Homebrew: \n')
+            print("Install Homebrew: \n")
             print(exec_logging)
 
     # install rbenv
@@ -673,26 +689,26 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == 'root'):
+        if (str(self.user) == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
 
         # install expect
         exec_logging = os.popen("apt install expect -y")
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
             print(exec_logging)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
-        script_path = os.path.join(script_path,'shell_scripts','Install_rbenv.exp')
+        script_path = os.path.join(script_path,"shell_scripts","Install_rbenv.exp")
 
         # run expect script
-        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
+        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {str(self.path)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install rbenv: \n")
             print(exec_logging)
@@ -720,7 +736,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == 'root'):
+        if (str(self.user) == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -729,19 +745,19 @@ class ColabSession:
 
         # install expect
         exec_logging = os.popen("apt install expect -y")
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
             print(exec_logging)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
-        script_path = os.path.join(script_path,'shell_scripts','Install_Ruby.exp')
+        script_path = os.path.join(script_path,"shell_scripts","Install_Ruby.exp")
 
         # run expect script
-        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(version) + " " + str(self.path)
+        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {str(version)} {str(self.path)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install Ruby: \n")
             print(exec_logging)
@@ -770,34 +786,34 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == 'root'):
+        if (str(self.user) == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
 
-        # install dependency
+        # install dependencies
         self.Install_Homebrew(verbose = verbose)
         self.Install_rbenv(verbose = verbose)
         self.Install_Ruby(version = Ruby_version,verbose = verbose)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
-        script_path = os.path.join(script_path,'shell_scripts','Install_Jekyll.exp')
+        script_path = os.path.join(script_path,"shell_scripts","Install_Jekyll.exp")
 
         # run expect script
-        char_cmd = "expect" + " " + str(script_path) + " " + str(self.user) + " " + str(self.password) + " " + str(self.path)
+        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {str(self.path)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install Jekyll: \n")
             print(exec_logging)
 
     ##############################
-    ## stable diffusion methods ##
+    ## Stable Diffusion methods ##
     ##############################
 
-    # run stable diffusion webui
-    def Run_stable_diffusion_webui(self,path = None,port = None,verbose = True,args = None,**kwargs):
+    # run Stable Diffusion WebUI
+    def Run_Stable_Diffusion_WebUI(self,path = None,port = None,verbose = True,args = None,**kwargs):
         """
         Install and run Stable Diffusion WebUI on Colab.
 
@@ -828,59 +844,57 @@ class ColabSession:
         if (port is None):
             port = self.port
         if (path is None):
-            path = "/tmp/" + str(self.path)
+            path = f"/tmp/{str(self.path)}"
         else:
-            char_cmd = "sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + str(path)
+            char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(path)}"
             os.system(char_cmd)
 
-        # install dependency
+        # install dependencies
         exec_logging = os.popen("apt install wget git python3 python3-venv libgl1 libglib2.0-0 -y")
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
-            print("Install dependency: \n")
+            print("Install dependencies: \n")
             print(exec_logging)
 
         # install Stable Diffusion WebUI
-        char_cmd = "wget" + " " + "-q" + " " + "-O" + " " + str(path) + "/webui.sh" + " " + "https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh"
+        char_cmd = f"wget -q -O {str(path)}/webui.sh https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh"
         os.system(char_cmd)
-        char_cmd = "chmod" + " " + "a+x" + " " + str(path) + "/webui.sh"
-        os.system(char_cmd)
-        char_cmd = str(path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port) + " " + "--exit"
+        char_cmd = f"bash {str(path)}/webui.sh -f --port {str(port)} --exit"
         if (args is None):
             for k,v in kwargs.items():
-                char_cmd = char_cmd + " " + "--" + str(k)
-                if (str(v) != ''):
-                    char_cmd = char_cmd + " " + str(v)
+                char_cmd = f"{char_cmd} --{str(k)}"
+                if (str(v) != ""):
+                    char_cmd = f"{char_cmd} {str(v)}"
         else:
             if (len(kwargs) > 0):
                 warnings.warn(message = "Extra arguments will be discarded when using the args parameter!",category = UserWarning)
-            char_cmd = char_cmd + " " + str(args)
+            char_cmd = f"{char_cmd} {str(args)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install Stable Diffusion WebUI: \n")
             print(exec_logging)
 
         # run Stable Diffusion WebUI
-        char_cmd = str(path) + "/webui.sh" + " " + "-f" + " " + "--port" + " " + str(port)
+        char_cmd = f"bash {str(path)}/webui.sh -f --port {str(port)}"
         if (args is None):
             for k,v in kwargs.items():
-                char_cmd = char_cmd + " " + "--" + str(k)
-                if (str(v) != ''):
-                    char_cmd = char_cmd + " " + str(v)
+                char_cmd = f"{char_cmd} --{str(k)}"
+                if (str(v) != ""):
+                    char_cmd = f"{char_cmd} {str(v)}"
         else:
-            char_cmd = char_cmd + " " + str(args)
-        char_cmd = "nohup" + " " + char_cmd + " " + ">" + " " + "/tmp/" + str(self.path) + "/stable_diffusion_webui.log 2>&1 &"
+            char_cmd = f"{char_cmd} {str(args)}"
+        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/Stable_Diffusion_WebUI.log 2>&1 &"
         os.system(char_cmd)
         os.system("sleep 30")
-        exec_logging = "Stable Diffusion WebUI log file" + ":" + " " + "/tmp/" + str(self.path) + "/stable_diffusion_webui.log."
+        exec_logging = f"Stable Diffusion WebUI log file: /tmp/{str(self.path)}/Stable_Diffusion_WebUI.log."
         print(exec_logging)
 
     ###################
     ## other methods ##
     ###################
 
-    # keep Colab session busy
+    # keep the Colab session busy
     def busy_session(self,busy = None):
         """
         Keep the Colab session active.
@@ -896,13 +910,12 @@ class ColabSession:
         # check param
         if (busy is None):
             busy = self.keep_busy
-        ii = 1
+        i = 1
 
         # while loop
         while busy:
-            i = "round" + " " + str(ii)
-            print(i)
-            ii = ii + 1
+            print(f"round {str(i)}")
+            i = i + 1
             time.sleep(60)
 
     # install Miniconda
@@ -910,7 +923,7 @@ class ColabSession:
         """
         Install Miniconda on Colab.
 
-        Miniconda is a free and minimal installer for the conda package manager and frequently used in scientific computing.
+        Miniconda is a free and minimal installer for the conda package manager and is frequently used in scientific computing.
         This function helps to install Miniconda on Colab.
 
         Parameters
@@ -923,19 +936,19 @@ class ColabSession:
 
         # check param
         if (path is None):
-            path = "/home/" + str(self.user)
+            path = f"/home/{str(self.user)}"
         else:
-            char_cmd = "sudo -u" + " " + str(self.user) + " " + "mkdir -p" + " " + str(path)
+            char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(path)}"
             os.system(char_cmd)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
-        script_path = os.path.join(script_path,'shell_scripts','Install_Miniconda.sh')
+        script_path = os.path.join(script_path,"shell_scripts","Install_Miniconda.sh")
 
         # install Miniconda
-        char_cmd = "sudo -u" + " " + str(self.user) + " " + "bash" + " " + str(script_path) + " " + str(self.user) + " " + str(path)
+        char_cmd = f"sudo -u {str(self.user)} bash {str(script_path)} {str(self.user)} {str(path)}"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install Miniconda: \n")
             print(exec_logging)
@@ -945,8 +958,8 @@ class ColabSession:
         """
         Install udocker on Colab.
 
-        udocker is a basic user tool to execute simple docker containers in user space without requiring root privileges.
-        udocker can also run inside a docker container, making it a perfect tool for executing containers on Colab.
+        udocker is a basic user tool to execute simple docker images in user space without requiring root privilege.
+        udocker can also run inside a docker container, making it a perfect tool for executing docker images on Colab.
 
         Parameters
         ----------
@@ -955,9 +968,9 @@ class ColabSession:
         """
 
         # install udocker
-        char_cmd = "pip install udocker" + " " + "&&" + " " + "sudo -u" + " " + str(self.user) + " " + "udocker --allow-root install"
+        char_cmd = f"pip install udocker && sudo -u {str(self.user)} udocker --allow-root install"
         exec_logging = os.popen(char_cmd)
-        exec_logging = ''.join(exec_logging.readlines())
+        exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install udocker: \n")
             print(exec_logging)
@@ -980,17 +993,17 @@ def update_environment(verbose = True):
     """
 
     exec_logging = os.popen("apt update")
-    exec_logging = ''.join(exec_logging.readlines())
+    exec_logging = "".join(exec_logging.readlines())
     if verbose:
         print("apt update: \n")
         print(exec_logging)
     exec_logging = os.popen("apt upgrade -y")
-    exec_logging = ''.join(exec_logging.readlines())
+    exec_logging = "".join(exec_logging.readlines())
     if verbose:
         print("apt upgrade: \n")
         print(exec_logging)
     exec_logging = os.popen("apt autoremove -y")
-    exec_logging = ''.join(exec_logging.readlines())
+    exec_logging = "".join(exec_logging.readlines())
     if verbose:
         print("apt autoremove: \n")
         print(exec_logging)

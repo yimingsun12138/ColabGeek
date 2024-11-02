@@ -37,7 +37,7 @@ main = ColabGeek.ColabSession(user='Knight',password='midnight',mount_GD=True)
 
 ## Web IDE methods
 
-As a cloud computing platform based on Jupyter notebook, Google Colab does not provide a top-notch comfortable environment for R language data mining and other non-Python programming. Therefore, this project provides methods for quickly installing other web IDEs on Google Colab, enabling it to expand its range of capabilities.
+As a cloud computing platform based on Jupyter notebook, Google Colab does not provide a top-notch user-friendly environment for R language data mining and other non-Python programming. Therefore, this project provides methods for quickly installing other web IDEs on Google Colab, enabling it to expand its range of capabilities.
 
 ### Run code server
 
@@ -88,7 +88,7 @@ main.Run_Rstudio_server()
 ```
 
 ### Run JupyterLab
-[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/index.html) is an interactive web IDE for working with Jupyter notebooks, code, and data. It is a flexible and extensible platform designed to support the entire workflow in data science, scientific computing, and machine learning projects. ColabGeek pulls the [mrdoge/jupyterlab docker image](https://hub.docker.com/r/mrdoge/jupyterlab) from Docker Hub and execute the docker container using [udocker](https://github.com/indigo-dc/udocker). Notice that it is not recommended to run udocker and JupyterLab under user root.
+[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/index.html) is a flexible and extensible web IDE designed to support the entire workflow in data science, scientific computing, and machine learning projects. ColabGeek pulls the [mrdoge/jupyterlab docker image](https://hub.docker.com/r/mrdoge/jupyterlab) from Docker Hub and executes using [udocker](https://github.com/indigo-dc/udocker). Notice that it is not recommended to run udocker and JupyterLab under ColabSession user root.
 
 ```python
 # ColabGeek.Run_JupyterLab has the following parameters:
@@ -132,7 +132,7 @@ main.Run_ngrok()
 
 ```python
 # ColabGeek.Run_Cloudflare_Tunnel has the following parameters:
-# - token The token of your tunnels created on Cloudflare.
+# - token The token of your tunnel created on Cloudflare.
 # - verbose Show the running logs.
 
 main.Run_Cloudflare_Tunnel(token='replace with your own tunnel token!')
@@ -168,21 +168,21 @@ main.Install_Jekyll(Ruby_version='3.2.2',verbose=True)
 
 ### Stable Diffusion WebUI
 
-[Stable Diffusion](https://github.com/CompVis/stable-diffusion) is a deep learning, text-to-image model released in 2022 based on diffusion techniques. It is primarily used to generate detailed images conditioned on text descriptions, though it can also be applied to other tasks such as inpainting, outpainting, and generating image-to-image translations guided by a text prompt. [Stable Diffusion WebUI](https://github.com/AUTOMATIC1111/stable-diffusion-webui) is a browser interface for Stable Diffusion that allows to create beautiful art much more easily. Stable Diffusion WebUI can be easily installed through ColabGeek and conveniently accessed using the tunneling method also provided by ColabGeek.
+[Stable Diffusion](https://github.com/CompVis/stable-diffusion) is a deep learning, text-to-image model released in 2022 based on diffusion techniques. It is primarily used to generate detailed images conditioned on text descriptions, though it can also be applied to other tasks such as inpainting, outpainting, and generating image-to-image translations guided by a text prompt. [Stable Diffusion WebUI](https://github.com/AUTOMATIC1111/stable-diffusion-webui) is a browser interface for Stable Diffusion that allows to create beautiful art much more easily. Stable Diffusion WebUI can be easily installed through ColabGeek and conveniently accessed using the tunnelling method also provided by ColabGeek.
 
 ```python
-# ColabGeek.Run_stable_diffusion_webui has the following parameters:
+# ColabGeek.Run_Stable_Diffusion_WebUI has the following parameters:
 # - path The installation path for Stable Diffusion WebUI, which is defaulted to /tmp.
 # - port The port you want to run the browser interface on, set to None to use the default port.
 # - verbose Show the running logs.
 # - args Custom parameters for installing and running Stable Diffusion WebUI.
 # - **kwargs Custom parameters for installing and running Stable Diffusion WebUI. Cannot be used in conjunction with the args parameter.
 
-main.Run_stable_diffusion_webui()
+main.Run_Stable_Diffusion_WebUI()
 
 # Use tunneling method built in Stable Diffusion WebUI:
-# main.Run_stable_diffusion_webui(args='--share --gradio-auth username:password')
-# main.Run_stable_diffusion_webui(share='')
+# main.Run_Stable_Diffusion_WebUI(args='--share --gradio-auth username:password')
+# main.Run_Stable_Diffusion_WebUI(share='')
 ```
 
 ## Statement
