@@ -6,8 +6,8 @@ Classes:
  - ColabSession: Class corresponding to the current Colab session.
 
 Exceptions:
- - RootUserError: Raise exception when the ColabSession user is root.
- - SudoPermissionError: Raise exception when the ColabSession user lacks sudo permission.
+ - RootUserError: Exception raised when the ColabSession user is root.
+ - SudoPermissionError: Exception raised when the ColabSession user lacks sudo permission.
 
 Methods:
  - update_environment: Update Ubuntu system environment.
@@ -20,7 +20,7 @@ import json
 import warnings
 
 ###############################
-## define ColabSession Class ##
+## define ColabSession class ##
 ###############################
 
 class ColabSession:
@@ -129,9 +129,9 @@ class ColabSession:
         # create tmp path
         self.tmp_path()
 
-    ##################
-    ## init methods ##
-    ##################
+    #######################
+    ## initialize method ##
+    #######################
 
     # add user
     def add_user(self):
@@ -181,9 +181,9 @@ class ColabSession:
         self.path = ((os.popen("date +%Y%m%d_%H%M%S").readlines())[0]).replace("\n","")
         os.system(f"sudo -u {str(self.user)} mkdir -p /tmp/{str(self.path)}")
 
-    ########################
-    ## tunnelling methods ##
-    ########################
+    #######################
+    ## tunnelling method ##
+    #######################
 
     # tunnelling with localtunnel
     def Run_localtunnel(self,port = None,host = "https://localtunnel.me",subdomain = None,verbose = True):
@@ -346,9 +346,9 @@ class ColabSession:
             print("Run cloudflared: \n")
             print(exec_logging)
 
-    #####################
-    ## web IDE methods ##
-    #####################
+    ####################
+    ## web IDE method ##
+    ####################
 
     # run Rstudio server
     def Run_Rstudio_server(self,port = None,verbose = True):
@@ -563,9 +563,9 @@ class ColabSession:
             print("JupyterLab log: \n")
             print(exec_logging)
 
-    ###################
-    ## proxy methods ##
-    ###################
+    ##################
+    ## proxy method ##
+    ##################
 
     # run shadowsocks
     def Run_shadowsocks(self,port = None,password = None,encrypt = "aes-256-gcm",verbose = True):
@@ -611,9 +611,9 @@ class ColabSession:
             print("Run shadowsocks-libev: \n")
             print(exec_logging)
 
-    ####################
-    ## Jekyll methods ##
-    ####################
+    ###################
+    ## Jekyll method ##
+    ###################
 
     # install Homebrew
     def Install_Homebrew(self,verbose = True):
@@ -808,9 +808,9 @@ class ColabSession:
             print("Install Jekyll: \n")
             print(exec_logging)
 
-    ##############################
-    ## Stable Diffusion methods ##
-    ##############################
+    #############################
+    ## Stable Diffusion method ##
+    #############################
 
     # run Stable Diffusion WebUI
     def Run_Stable_Diffusion_WebUI(self,path = None,port = None,verbose = True,args = None,**kwargs):
@@ -890,9 +890,9 @@ class ColabSession:
         exec_logging = f"Stable Diffusion WebUI log file: /tmp/{str(self.path)}/Stable_Diffusion_WebUI.log."
         print(exec_logging)
 
-    ###################
-    ## other methods ##
-    ###################
+    ##################
+    ## other method ##
+    ##################
 
     # keep the Colab session busy
     def busy_session(self,busy = None):
@@ -975,9 +975,9 @@ class ColabSession:
             print("Install udocker: \n")
             print(exec_logging)
 
-##########################
-## define other methods ##
-##########################
+#########################
+## define other method ##
+#########################
 
 # update environment
 def update_environment(verbose = True):
@@ -1008,9 +1008,9 @@ def update_environment(verbose = True):
         print("apt autoremove: \n")
         print(exec_logging)
 
-##############################
-## define Exception Classes ##
-##############################
+############################
+## define Exception class ##
+############################
 
 # RootUserError
 class RootUserError(Exception):

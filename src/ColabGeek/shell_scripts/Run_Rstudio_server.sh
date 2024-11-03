@@ -3,7 +3,7 @@
 # go to temp installation path
 cd /tmp/$1
 
-# install
+# install Rstudio server
 apt install gdebi-core -y
 wget https://s3.ap-east-1.amazonaws.com/mrdoge-s3-bucket/share/resource_for_download/rstudio_server_for_Google_Colab.deb -O /tmp/$1/rstudio_server.deb
 gdebi -n /tmp/$1/rstudio_server.deb
