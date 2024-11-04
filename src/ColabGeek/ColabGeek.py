@@ -217,7 +217,7 @@ class ColabSession:
 
         # install localtunnel
         if(len(os.popen("which npm").readlines()) == 0):
-            exec_logging = os.popen("apt install nodejs npm -y")
+            exec_logging = os.popen("apt install -y nodejs npm")
             exec_logging = "".join(exec_logging.readlines())
             if verbose:
                 print("Install nodejs and npm: \n")
@@ -276,7 +276,7 @@ class ColabSession:
             port = self.port
 
         # install ngrok
-        char_cmd = 'curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc > /dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok'
+        char_cmd = 'curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc > /dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install -y ngrok'
         exec_logging = os.popen(char_cmd)
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
@@ -371,6 +371,13 @@ class ColabSession:
         if (port is None):
             port = self.port
 
+        # install gdebi-core
+        exec_logging = os.popen("apt install gdebi-core -y")
+        exec_logging = "".join(exec_logging.readlines())
+        if verbose:
+            print("Install gdebi-core: \n")
+            print(exec_logging)
+
         # get shell script path
         script_path = os.path.dirname(__file__)
         script_path = os.path.join(script_path,"shell_scripts","Run_Rstudio_server.sh")
@@ -420,7 +427,7 @@ class ColabSession:
             password = self.password
 
         # install expect
-        exec_logging = os.popen("apt install expect -y")
+        exec_logging = os.popen("apt install -y expect")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
@@ -593,7 +600,7 @@ class ColabSession:
             password = self.password
 
         # install shadowsocks
-        exec_logging = os.popen("apt install shadowsocks-libev -y")
+        exec_logging = os.popen("apt install -y shadowsocks-libev")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install shadowsocks-libev: \n")
@@ -642,14 +649,14 @@ class ColabSession:
             raise SudoPermissionError()
 
         # install expect
-        exec_logging = os.popen("apt install expect -y")
+        exec_logging = os.popen("apt install -y expect")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
             print(exec_logging)
 
         # install Homebrew dependencies
-        exec_logging = os.popen("apt install build-essential -y")
+        exec_logging = os.popen("apt install -y build-essential")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install Homebrew dependencies: \n")
@@ -695,7 +702,7 @@ class ColabSession:
             raise SudoPermissionError()
 
         # install expect
-        exec_logging = os.popen("apt install expect -y")
+        exec_logging = os.popen("apt install -y expect")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
@@ -744,7 +751,7 @@ class ColabSession:
             version = input("Input the Ruby version to install: ")
 
         # install expect
-        exec_logging = os.popen("apt install expect -y")
+        exec_logging = os.popen("apt install -y expect")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install expect: \n")
@@ -850,7 +857,7 @@ class ColabSession:
             os.system(char_cmd)
 
         # install dependencies
-        exec_logging = os.popen("apt install wget git python3 python3-venv libgl1 libglib2.0-0 -y")
+        exec_logging = os.popen("apt install -y wget git python3 python3-venv libgl1 libglib2.0-0")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install dependencies: \n")

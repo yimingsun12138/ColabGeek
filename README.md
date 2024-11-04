@@ -21,7 +21,7 @@ pip install ColabGeek
 
 ## Get started
 
-First import the ColabGeek module and update all the packages and dependencies in the system (Please run under root privilege).
+First import ColabGeek and update all the packages and dependencies in the system (Please run under root privilege).
 
 ```python
 import ColabGeek
