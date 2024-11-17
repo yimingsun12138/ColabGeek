@@ -52,7 +52,7 @@ As a cloud computing platform based on Jupyter notebook, Google Colab does not p
 main.Run_code_server()
 ```
 
-You can also install code server extension by providing extension id or the path of the VSIX file downloaded from [vscode marketplace](https://marketplace.visualstudio.com/vscode).
+You can also install code server extension by providing extension id or the path of the VSIX file downloaded from [VSCode marketplace](https://marketplace.visualstudio.com/vscode).
 
 ```python
 # ColabSession.Install_code_server_extension has the following parameters:
@@ -62,7 +62,7 @@ You can also install code server extension by providing extension id or the path
 main.Install_code_server_extension(extension = "ms-python.anaconda-extension-pack")
 ```
 
-You can also config code server through `ColabSession.Config_code_server` method.
+You can also configure code server through `ColabSession.Config_code_server` method.
 
 ```python
 # ColabSession.Config_code_server has the following parameters:
@@ -172,7 +172,7 @@ main.Install_Jekyll(Ruby_version = "3.3.5",verbose = True)
 
 ```python
 # ColabSession.Run_Stable_Diffusion_WebUI has the following parameters:
-# - path The directory to install Stable Diffusion WebUI. The default path is in /tmp.
+# - path The directory to install Stable Diffusion WebUI. The default path is located in the home of the ColabSession user.
 # - port Listening port for Stable Diffusion WebUI, set to None to use the default port.
 # - verbose Whether to show the running logs.
 # - args Additional arguments to pass to the Stable Diffusion WebUI setup script.

@@ -65,7 +65,7 @@ class ColabSession:
     Run_code_server(port = None,password = None,verbose = True)
         Install and run code server on Colab.
     Install_code_server_extension(extension,verbose = True)
-        Install code server extensions.
+        Install code server extension.
     Config_code_server(property,value)
         Configure code server.
     Run_JupyterLab(port = None,password = None,mount_Colab = True,verbose = True)
@@ -79,7 +79,7 @@ class ColabSession:
     Install_Ruby(version = None,verbose = True)
         Install Ruby on Colab.
     Install_Jekyll(Ruby_version = None,verbose = True)
-        Install and run Jekyll on Colab.
+        Install Jekyll on Colab.
     Run_Stable_Diffusion_WebUI(path = None,port = None,verbose = True,args = None,**kwargs)
         Install and run Stable Diffusion WebUI on Colab.
     busy_session(busy = None)
@@ -112,12 +112,12 @@ class ColabSession:
             Whether to keep the Colab session busy to prevent termination.
         """
 
-        self.user = user
-        self.password = password
-        self.sudo = sudo
-        self.port = port
-        self.mount_GD = mount_GD
-        self.keep_busy = keep_busy
+        self.user = str(user)
+        self.password = str(password)
+        self.sudo = bool(sudo)
+        self.port = int(port)
+        self.mount_GD = bool(mount_GD)
+        self.keep_busy = bool(keep_busy)
         self.path = None
 
         # add user
@@ -185,7 +185,7 @@ class ColabSession:
     ## tunnelling method ##
     #######################
 
-    # tunnelling with localtunnel
+    # tunnelling by localtunnel
     def Run_localtunnel(self,port = None,host = "https://localtunnel.me",subdomain = None,verbose = True):
         """
         Install and run localtunnel for tunnelling.
@@ -243,7 +243,7 @@ class ColabSession:
         lt_url = ((lt_url.readlines())[0]).replace("\n","")
         return(lt_url)
 
-    # tunnelling with ngrok
+    # tunnelling by ngrok
     def Run_ngrok(self,token = None,port = None,domain = None,verbose = True):
         """
         Install and run ngrok for tunnelling.
@@ -302,7 +302,7 @@ class ColabSession:
         ngrok_url = ((ngrok_url.readlines())[0]).replace("\n","")
         return(ngrok_url)
 
-    # tunnelling with cloudflared
+    # tunnelling by cloudflared
     def Run_Cloudflare_Tunnel(self,token = None,verbose = True):
         """
         Install and run cloudflared for tunnelling.
@@ -372,7 +372,7 @@ class ColabSession:
             port = self.port
 
         # install gdebi-core
-        exec_logging = os.popen("apt install gdebi-core -y")
+        exec_logging = os.popen("apt install -y gdebi-core")
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
             print("Install gdebi-core: \n")
@@ -387,7 +387,7 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
-            print("Install Rstudio server: \n")
+            print("Install and run Rstudio server: \n")
             print(exec_logging)
 
     # run code server
@@ -442,16 +442,16 @@ class ColabSession:
         exec_logging = os.popen(char_cmd)
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
-            print("Install code server: \n")
+            print("Install and run code server: \n")
             print(exec_logging)
 
-    # install code server extensions
+    # install code server extension
     def Install_code_server_extension(self,extension,verbose = True):
         """
-        Install code server extensions.
+        Install code server extension.
 
         The code server supports a variety of VSCode plugins.
-        This function helps to install code server extensions through command line.
+        This function helps to install code server extension through command line.
 
         Parameters
         ----------
@@ -725,7 +725,7 @@ class ColabSession:
         """
         Install Ruby on Colab.
 
-        This function helps to install a specified version of Ruby using rbenv.
+        This function helps to install a specified version of Ruby on Colab by rbenv.
 
         Parameters
         ----------
@@ -772,10 +772,10 @@ class ColabSession:
     # install Jekyll
     def Install_Jekyll(self,Ruby_version = None,verbose = True):
         """
-        Install and run Jekyll on Colab.
+        Install Jekyll on Colab.
 
         Jekyll is a simple, blog-aware, static site generator suited for personal, project or organizational sites.
-        This function helps to install and run Jekyll on Colab.
+        This function helps to install Jekyll on Colab.
 
         Parameters
         ----------
@@ -851,10 +851,9 @@ class ColabSession:
         if (port is None):
             port = self.port
         if (path is None):
-            path = f"/tmp/{str(self.path)}"
-        else:
-            char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(path)}"
-            os.system(char_cmd)
+            path = f"/home/{str(self.user)}/Stable_Diffusion_WebUI"
+        char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(path)}"
+        os.system(char_cmd)
 
         # install dependencies
         exec_logging = os.popen("apt install -y wget git python3 python3-venv libgl1 libglib2.0-0")
@@ -944,9 +943,8 @@ class ColabSession:
         # check param
         if (path is None):
             path = f"/home/{str(self.user)}"
-        else:
-            char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(path)}"
-            os.system(char_cmd)
+        char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(path)}"
+        os.system(char_cmd)
 
         # get shell script path
         script_path = os.path.dirname(__file__)
