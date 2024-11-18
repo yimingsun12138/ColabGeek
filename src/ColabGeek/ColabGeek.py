@@ -54,6 +54,8 @@ class ColabSession:
         Mount Google Drive if mount_GD is set to True.
     tmp_path()
         Create a temporary directory in /tmp.
+    pip_global_log()
+        Grant permission to pip global log.
     Run_localtunnel(port = None,host = "https://localtunnel.me",subdomain = None,verbose = True)
         Install and run localtunnel for tunnelling.
     Run_ngrok(token = None,port = None,domain = None,verbose = True)
@@ -112,6 +114,7 @@ class ColabSession:
             Whether to keep the Colab session busy to prevent termination.
         """
 
+        # set attributes
         self.user = str(user)
         self.password = str(password)
         self.sudo = bool(sudo)
@@ -128,6 +131,9 @@ class ColabSession:
 
         # create tmp path
         self.tmp_path()
+
+        # grant permission to pip global log
+        self.pip_global_log()
 
     #######################
     ## initialize method ##
@@ -181,6 +187,18 @@ class ColabSession:
         self.path = ((os.popen("date +%Y%m%d_%H%M%S").readlines())[0]).replace("\n","")
         os.system(f"sudo -u {str(self.user)} mkdir -p /tmp/{str(self.path)}")
 
+    # grant permission to pip global log
+    def pip_global_log(self):
+        """
+        Grant permission to pip global log.
+        """
+
+        pip_config_list = os.popen("pip config list").readlines()
+        for i in pip_config_list:
+            if ("global.log" in i):
+                pip_global_log_location = (i.replace("\n","").split("=")[1]).replace("'","")
+                os.system(f"chmod -R a+rwx {pip_global_log_location}")
+
     #######################
     ## tunnelling method ##
     #######################
@@ -216,7 +234,7 @@ class ColabSession:
             port = self.port
 
         # install localtunnel
-        if(len(os.popen("which npm").readlines()) == 0):
+        if (len(os.popen("which npm").readlines()) == 0):
             exec_logging = os.popen("apt install -y nodejs npm")
             exec_logging = "".join(exec_logging.readlines())
             if verbose:
@@ -855,6 +873,13 @@ class ColabSession:
         char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(path)}"
         os.system(char_cmd)
 
+        # install expect
+        exec_logging = os.popen("apt install -y expect")
+        exec_logging = "".join(exec_logging.readlines())
+        if verbose:
+            print("Install expect: \n")
+            print(exec_logging)
+
         # install dependencies
         exec_logging = os.popen("apt install -y wget git python3 python3-venv libgl1 libglib2.0-0")
         exec_logging = "".join(exec_logging.readlines())
@@ -862,39 +887,34 @@ class ColabSession:
             print("Install dependencies: \n")
             print(exec_logging)
 
-        # install Stable Diffusion WebUI
-        char_cmd = f"wget -q -O {str(path)}/webui.sh https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh"
-        os.system(char_cmd)
-        char_cmd = f"bash {str(path)}/webui.sh -f --port {str(port)} --exit"
+        # set Stable Diffusion WebUI argument
+        Stable_Diffusion_WebUI_argument = f"--port {str(port)}"
         if (args is None):
             for k,v in kwargs.items():
-                char_cmd = f"{char_cmd} --{str(k)}"
+                Stable_Diffusion_WebUI_argument = f"{Stable_Diffusion_WebUI_argument} --{str(k)}"
                 if (str(v) != ""):
-                    char_cmd = f"{char_cmd} {str(v)}"
+                    Stable_Diffusion_WebUI_argument = f"{Stable_Diffusion_WebUI_argument} {str(v)}"
         else:
             if (len(kwargs) > 0):
                 warnings.warn(message = "Extra arguments will be discarded when using the args parameter!",category = UserWarning)
-            char_cmd = f"{char_cmd} {str(args)}"
+            Stable_Diffusion_WebUI_argument = f"{Stable_Diffusion_WebUI_argument} {str(args)}"
+
+        # get shell script path
+        script_path = os.path.dirname(__file__)
+        script_path = os.path.join(script_path,"shell_scripts","Run_Stable_Diffusion_WebUI.exp")
+
+        # run Stable Diffusion WebUI
+        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {path} {str(self.path)} {Stable_Diffusion_WebUI_argument}"
         exec_logging = os.popen(char_cmd)
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
-            print("Install Stable Diffusion WebUI: \n")
+            print("Install and run Stable Diffusion WebUI: \n")
             print(exec_logging)
 
-        # run Stable Diffusion WebUI
-        char_cmd = f"bash {str(path)}/webui.sh -f --port {str(port)}"
-        if (args is None):
-            for k,v in kwargs.items():
-                char_cmd = f"{char_cmd} --{str(k)}"
-                if (str(v) != ""):
-                    char_cmd = f"{char_cmd} {str(v)}"
-        else:
-            char_cmd = f"{char_cmd} {str(args)}"
-        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/Stable_Diffusion_WebUI.log 2>&1 &"
-        os.system(char_cmd)
-        os.system("sleep 30")
-        exec_logging = f"Stable Diffusion WebUI log file: /tmp/{str(self.path)}/Stable_Diffusion_WebUI.log."
-        print(exec_logging)
+        # return
+        os.system("sleep 120")
+        Stable_Diffusion_WebUI_log = f"Stable Diffusion WebUI log file: /tmp/{str(self.path)}/Stable_Diffusion_WebUI.log."
+        return(Stable_Diffusion_WebUI_log)
 
     ##################
     ## other method ##

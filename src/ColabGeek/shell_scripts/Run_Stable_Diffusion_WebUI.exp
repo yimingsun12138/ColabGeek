@@ -1,0 +1,28 @@
+#!/usr/bin/expect
+
+set timeout -1
+set user_name [lindex $argv 0]
+set user_password [lindex $argv 1]
+set installation_path [lindex $argv 2]
+set tmp_path [lindex $argv 3]
+set Stable_Diffusion_WebUI_argument [lrange $argv 4 end]
+
+spawn su $user_name
+expect "\\\$"
+send "cd /tmp/$tmp_path\r"
+expect "\\\$"
+
+# install Stable Diffusion WebUI
+send "wget -q -O $installation_path/webui.sh https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh\r"
+expect "\\\$"
+send "bash $installation_path/webui.sh -f --exit $Stable_Diffusion_WebUI_argument\r"
+expect "\\\$"
+
+# run Stable Diffusion WebUI
+send "nohup bash $installation_path/webui.sh -f $Stable_Diffusion_WebUI_argument > /tmp/$tmp_path/Stable_Diffusion_WebUI.log 2>&1 &\r"
+expect "\\\$"
+
+send "exit\r"
+expect "*"
+send "exit\r"
+expect eof
