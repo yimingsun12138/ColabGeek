@@ -176,7 +176,7 @@ class ColabSession:
             except ImportError as e:
                 error_message = f"{e}.\n\nPlease set the `mount_GD` parameter to False and try manually mounting Google Drive. Contact the author if the problem persists."
                 raise ImportError(error_message) from e
-            drive.mount('/content/drive')
+            drive.mount("/content/drive")
 
     # create tmp path
     def tmp_path(self):
@@ -196,8 +196,8 @@ class ColabSession:
         pip_config_list = os.popen("pip config list").readlines()
         for i in pip_config_list:
             if ("global.log" in i):
-                pip_global_log_location = (i.replace("\n","").split("=")[1]).replace("'","")
-                os.system(f"chmod -R a+rwx {pip_global_log_location}")
+                pip_global_log_path = (i.replace("\n","").split("=")[1]).replace("'","")
+                os.system(f"chmod -R a+rwx {str(pip_global_log_path)}")
 
     #######################
     ## tunnelling method ##
@@ -249,8 +249,8 @@ class ColabSession:
         # exec cmd
         char_cmd = f"lt --port {str(port)} --host {str(host)}"
         if not(subdomain is None):
-            char_cmd = f"{char_cmd} --subdomain {str(subdomain)}"
-        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/localtunnel.log 2>&1 &"
+            char_cmd = f"{str(char_cmd)} --subdomain {str(subdomain)}"
+        char_cmd = f"nohup {str(char_cmd)} > /tmp/{str(self.path)}/localtunnel.log 2>&1 &"
 
         # exec
         os.system(char_cmd)
@@ -308,8 +308,8 @@ class ColabSession:
         # exec cmd
         char_cmd = f"ngrok http {str(port)}"
         if not(domain is None):
-            char_cmd = f"{char_cmd} --domain {str(domain)}"
-        char_cmd = f"{char_cmd} --log stdout > /tmp/{str(self.path)}/ngrok.log &"
+            char_cmd = f"{str(char_cmd)} --domain {str(domain)}"
+        char_cmd = f"{str(char_cmd)} --log stdout > /tmp/{str(self.path)}/ngrok.log &"
 
         # exec
         os.system(char_cmd)
@@ -343,7 +343,7 @@ class ColabSession:
 
         # install cloudflared
         char_cmd = f"curl -L --output /tmp/{str(self.path)}/cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
-        char_cmd = f"{char_cmd} && dpkg -i /tmp/{str(self.path)}/cloudflared.deb"
+        char_cmd = f"{str(char_cmd)} && dpkg -i /tmp/{str(self.path)}/cloudflared.deb"
         exec_logging = os.popen(char_cmd)
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
@@ -352,7 +352,7 @@ class ColabSession:
 
         # exec cmd
         char_cmd = f"cloudflared service install {str(token)}"
-        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/cloudflared.log 2>&1 &"
+        char_cmd = f"nohup {str(char_cmd)} > /tmp/{str(self.path)}/cloudflared.log 2>&1 &"
 
         # exec
         os.system(char_cmd)
@@ -435,7 +435,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == "root"):
+        if (self.user == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -503,14 +503,14 @@ class ColabSession:
 
         # check whether settings.json exists
         file_path = f"/home/{str(self.user)}/.local/share/code-server/User"
-        char_cmd = f"sudo -u {str(self.user)} mkdir -p {file_path}"
+        char_cmd = f"sudo -u {str(self.user)} mkdir -p {str(file_path)}"
         os.system(char_cmd)
-        file_path = f"{file_path}/settings.json"
+        file_path = f"{str(file_path)}/settings.json"
         if os.path.exists(file_path):
             with open(file_path,"r") as json_file:
                 json_setting = json.load(json_file)
         else:
-            char_cmd = f"sudo -u {str(self.user)} touch {file_path}"
+            char_cmd = f"sudo -u {str(self.user)} touch {str(file_path)}"
             os.system(char_cmd)
             json_setting = {}
 
@@ -554,7 +554,7 @@ class ColabSession:
             raise ImportError(error_message) from e
 
         # check param
-        if (str(self.user) == "root"):
+        if (self.user == "root"):
             warnings.warn(message = "Running udocker and JupyterLab under ColabSession user root may lead to unexpected issues!",category = UserWarning)
         if (port is None):
             port = self.port
@@ -576,9 +576,9 @@ class ColabSession:
         # run JupyterLab
         char_cmd = f"sudo -u {str(self.user)} udocker --allow-root run -p {str(port)}:8888"
         if mount_Colab:
-            char_cmd = f"{char_cmd} -v /content:/content"
-        char_cmd = f"{char_cmd} mrdoge/jupyterlab jupyter lab --allow-root --ip=0.0.0.0 --port=8888 --no-browser --ServerApp.password='{str(password)}'"
-        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/JupyterLab.log 2>&1 &"
+            char_cmd = f"{str(char_cmd)} -v /content:/content"
+        char_cmd = f"{str(char_cmd)} mrdoge/jupyterlab jupyter lab --allow-root --ip=0.0.0.0 --port=8888 --no-browser --ServerApp.password='{str(password)}'"
+        char_cmd = f"nohup {str(char_cmd)} > /tmp/{str(self.path)}/JupyterLab.log 2>&1 &"
         os.system(char_cmd)
         os.system("sleep 120")
         char_cmd = f"cat /tmp/{str(self.path)}/JupyterLab.log"
@@ -626,7 +626,7 @@ class ColabSession:
 
         # run shadowsocks
         char_cmd = f"ss-server -s 0.0.0.0 -p {str(port)} -k {str(password)} -m {str(encrypt)}"
-        char_cmd = f"nohup {char_cmd} > /tmp/{str(self.path)}/shadowsocks.log 2>&1 &"
+        char_cmd = f"nohup {str(char_cmd)} > /tmp/{str(self.path)}/shadowsocks.log 2>&1 &"
         os.system(char_cmd)
         os.system("sleep 10")
         char_cmd = f"cat /tmp/{str(self.path)}/shadowsocks.log"
@@ -661,7 +661,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == "root"):
+        if (self.user == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -714,7 +714,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == "root"):
+        if (self.user == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -761,7 +761,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == "root"):
+        if (self.user == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -811,7 +811,7 @@ class ColabSession:
         """
 
         # check param
-        if (str(self.user) == "root"):
+        if (self.user == "root"):
             raise RootUserError()
         if (self.sudo == False):
             raise SudoPermissionError()
@@ -891,20 +891,20 @@ class ColabSession:
         Stable_Diffusion_WebUI_argument = f"--port {str(port)}"
         if (args is None):
             for k,v in kwargs.items():
-                Stable_Diffusion_WebUI_argument = f"{Stable_Diffusion_WebUI_argument} --{str(k)}"
+                Stable_Diffusion_WebUI_argument = f"{str(Stable_Diffusion_WebUI_argument)} --{str(k)}"
                 if (str(v) != ""):
-                    Stable_Diffusion_WebUI_argument = f"{Stable_Diffusion_WebUI_argument} {str(v)}"
+                    Stable_Diffusion_WebUI_argument = f"{str(Stable_Diffusion_WebUI_argument)} {str(v)}"
         else:
             if (len(kwargs) > 0):
                 warnings.warn(message = "Extra arguments will be discarded when using the args parameter!",category = UserWarning)
-            Stable_Diffusion_WebUI_argument = f"{Stable_Diffusion_WebUI_argument} {str(args)}"
+            Stable_Diffusion_WebUI_argument = f"{str(Stable_Diffusion_WebUI_argument)} {str(args)}"
 
         # get shell script path
         script_path = os.path.dirname(__file__)
         script_path = os.path.join(script_path,"shell_scripts","Run_Stable_Diffusion_WebUI.exp")
 
         # run Stable Diffusion WebUI
-        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {path} {str(self.path)} {Stable_Diffusion_WebUI_argument}"
+        char_cmd = f"expect {str(script_path)} {str(self.user)} {str(self.password)} {str(path)} {str(self.path)} {str(Stable_Diffusion_WebUI_argument)}"
         exec_logging = os.popen(char_cmd)
         exec_logging = "".join(exec_logging.readlines())
         if verbose:
