@@ -7,11 +7,11 @@ ColabGeek is designed to help run useful tools on Google Colab, including web ID
 
 ## Version info
 
-Version: 1.3.8
+Version: 1.4.1
 
 Platform: Ubuntu 22.04 LTS
 
-Update: 2024/10/24
+Update: 2024/11/20
 
 ## Installation
 
